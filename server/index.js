@@ -14,7 +14,7 @@ const fs = require("fs");
 const path = require("path");
 const { Redis } = require("@upstash/redis");
 
-const ROOT = path.join(__dirname, ".."); // cartella della PWA (index.html, sw.js, ecc.)
+const ROOT = path.join(__dirname, "public"); // cartella della PWA (index.html, sw.js, ecc.)
 const DATA_DIR = path.join(__dirname, "data");
 const SEED_OFFERS_FILE = path.join(DATA_DIR, "offers.json"); // solo per il primo avvio
 
