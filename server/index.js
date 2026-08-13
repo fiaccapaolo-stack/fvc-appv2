@@ -13,6 +13,7 @@ const webpush = require("web-push");
 const fs = require("fs");
 const path = require("path");
 const { Redis } = require("@upstash/redis");
+const QRCode = require("qrcode");
 
 const ROOT = path.join(__dirname, "public"); // cartella della PWA (index.html, sw.js, ecc.)
 const DATA_DIR = path.join(__dirname, "data");
@@ -233,6 +234,20 @@ async function main() {
   const app = express();
   app.use(express.json({ limit: "8mb" })); // aumentato per permettere le foto caricate dal pannello
   app.use(express.static(ROOT));
+
+
+  // QR pubblico dell'app: la home lo richiede tramite <img src="/api/qr">.
+  app.get("/api/qr", async (req, res) => {
+    try {
+      const config = (await getConfig()) || DEFAULT_CONFIG;
+      const appUrl = config.publicUrl || `${req.protocol}://${req.get("host")}`;
+      const png = await QRCode.toBuffer(appUrl, { width: 700, margin: 2 });
+      res.type("png").send(png);
+    } catch (err) {
+      console.error("Errore generazione QR:", err);
+      res.status(500).json({ error: "Impossibile generare il QR code" });
+    }
+  });
 
   // ---- endpoint pubblici, usati dalla app dei clienti ----
   app.get("/api/vapid-public-key", (req, res) => {
