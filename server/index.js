@@ -66,6 +66,12 @@ app.post('/api/subscribe', async (req, res) => {
 });
 
 app.get('/api/admin/config', admin, async (_req, res) => res.json(await getConfig()));
+
+/* Verifica password Admin: richiesta dal pannello admin.html. */
+app.post('/api/admin/check', admin, (_req, res) => {
+  res.json({ ok: true });
+});
+
 app.put('/api/admin/config', admin, async (req, res) => {
   const current = await getConfig();
   const body = req.body || {};
