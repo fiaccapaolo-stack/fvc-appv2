@@ -1,0 +1,7 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QR code — FVC Project</title><style>
+body{margin:0;background:#fff;color:#111;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.wrap{text-align:center;padding:30px}.wrap h1{font-size:28px;margin:0 0 8px}.wrap p{color:#555;margin:0 0 22px}
+#qr{width:min(520px,82vw);height:auto;background:#fff;padding:12px;box-sizing:border-box}.actions{margin-top:22px;display:flex;gap:10px;justify-content:center}
+.btn{padding:11px 20px;border:0;border-radius:8px;background:#111;color:#fff;font-weight:600;cursor:pointer}.btn.alt{background:#ddd;color:#111}
+@media print{.actions{display:none}body{display:block}.wrap{padding:10mm}.wrap h1{font-size:24pt}.wrap p{font-size:12pt}#qr{width:150mm;max-width:100%}}
+</style></head><body><main class="wrap"><h1>FVC Project</h1><p>Scansiona il QR code per aprire l'app.</p><img id="qr" src="/api/qr" alt="QR code FVC Project"><div class="actions"><button class="btn" onclick="window.print()">Stampa QR</button><button class="btn alt" onclick="window.close()">Chiudi</button></div></main></body></html>
