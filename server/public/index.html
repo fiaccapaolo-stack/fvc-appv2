@@ -478,8 +478,25 @@
   .brand-products{padding-top:10px;}
   .catalog-no-results{padding:12px 0;color:var(--text-dim);font-size:13px;}
 
+
+  /* installazione app per sistema operativo */
+  .install-app-section{padding-top:28px;}
+  .install-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .install-btn{width:100%;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:14px;padding:14px 10px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;font-family:var(--font-body);transition:border-color .15s ease,transform .15s ease;}
+  .install-btn:hover{border-color:var(--gold);}.install-btn:active{transform:scale(.98);}
+  .install-btn.current{border-color:var(--gold);box-shadow:0 0 0 1px rgba(212,175,55,.18) inset;}
+  .install-icon{width:36px;height:36px;border-radius:10px;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto;}
+  .install-btn strong{display:block;font-size:13px;margin-bottom:3px;}.install-btn small{display:block;color:var(--text-dim);font-size:10.5px;line-height:1.25;}
+  .install-hint{margin:12px 0 0;color:var(--text-dim);font-size:11.5px;line-height:1.45;}
+  .install-modal{position:fixed;inset:0;background:rgba(5,8,12,.78);display:none;align-items:flex-end;justify-content:center;padding:0;z-index:3000;}
+  .install-modal.show{display:flex;}.install-modal-card{width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:22px 20px 26px;position:relative;}
+  .install-modal-card h3{font-family:var(--font-display);font-size:22px;margin:0 42px 8px 0;}.install-modal-card p{color:var(--text-dim);font-size:13px;line-height:1.5;}
+  .install-steps{margin:14px 0 0;padding-left:20px;color:var(--text);font-size:13px;line-height:1.65;}
+  .install-close{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface-alt);color:var(--text);font-size:19px;cursor:pointer;}
+  .install-modal-actions{display:flex;gap:8px;margin-top:18px;}.install-modal-actions .btn{flex:1;}
+  @media(max-width:420px){.install-grid{grid-template-columns:1fr;}}
 </style>
-<style>.page{display:none}.qr-link{padding:24px}.back{display:inline-block;margin-bottom:16px;text-decoration:none;color:var(--cyan)}.product-card{cursor:pointer}.qr-link .notify-card{margin:0}.qr-link{border-top:0}</style></head>
+<style>.page{display:none}.qr-link{padding:24px}.back{display:inline-block;margin-bottom:16px;text-decoration:none;color:var(--cyan)}.product-card{cursor:pointer}</style></head>
 <body>
 <div class="statusbar">
   <span id="clock"></span>
@@ -500,6 +517,18 @@
     <a class="tile" href="#negozio"><span class="glyph">📍</span><span class="label">Negozio</span></a>
   </nav>
 </header>
+
+<section class="install-app-section">
+  <div class="section-head"><div><p class="eyebrow">Installazione</p><h3>Installa l'app</h3></div></div>
+  <div class="install-grid" id="install-grid">
+    <button class="install-btn" data-platform="android" type="button"><span class="install-icon">🤖</span><span><strong>Android</strong><small>Installa sul telefono</small></span></button>
+    <button class="install-btn" data-platform="iphone" type="button"><span class="install-icon"></span><span><strong>iPhone</strong><small>Aggiungi alla schermata Home</small></span></button>
+    <button class="install-btn" data-platform="windows" type="button"><span class="install-icon">⊞</span><span><strong>Windows</strong><small>Installa sul PC</small></span></button>
+    <button class="install-btn" data-platform="macos" type="button"><span class="install-icon"></span><span><strong>macOS</strong><small>Aggiungi al Dock</small></span></button>
+  </div>
+  <p class="install-hint" id="install-hint">Scegli il sistema che stai usando. Il dispositivo attuale viene evidenziato automaticamente.</p>
+</section>
+
 
 <main>
 <section id="home"></section>
@@ -565,12 +594,6 @@
   <div class="cta-row"><a class="btn" id="shop-directions" href="#" target="_blank" rel="noopener">Indicazioni</a><a class="btn ghost" id="shop-call" href="#">Chiama</a></div>
 </section>
 
-<section class="qr-link">
-  <div class="notify-card">
-    <div class="txt"><h4>QR code dell'app</h4><p>Aprilo in una finestra separata per stamparlo e farlo scansionare ai clienti.</p></div>
-    <button class="btn" id="qrBtn">Apri QR</button>
-  </div>
-</section>
 </main>
 
 <footer><div class="bars"><span></span><span></span><span></span><span></span></div><p id="shop-footer">Fvc Project Srl</p></footer>
@@ -654,7 +677,6 @@ document.addEventListener('click',e=>{
   const plan=e.target.closest('.plan');if(plan){openGeneric('plan',cfg.plans[+plan.dataset.index]);return}
 });
 $('search').oninput=renderProducts;$('brand').onchange=renderProducts;
-$('qrBtn').onclick=()=>window.open('/qr.html','fvc_qr','width=700,height=800,noopener,noreferrer');
 
 function renderShop(){
   $('shop-address').textContent=cfg.address||'';
@@ -674,5 +696,16 @@ async function init(){
 window.addEventListener('hashchange',showPage);init();
 
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(console.error));
+let deferredInstallPrompt=null;let selectedInstallPlatform=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;});
+function detectPlatform(){const ua=navigator.userAgent||'';const p=navigator.platform||'';if(/iPhone|iPad|iPod/i.test(ua)||(p==='MacIntel'&&navigator.maxTouchPoints>1))return'iphone';if(/Android/i.test(ua))return'android';if(/Windows/i.test(ua))return'windows';if(/Macintosh|Mac OS X/i.test(ua))return'macos';return'';}
+function markCurrentInstallPlatform(){const c=detectPlatform();document.querySelectorAll('.install-btn').forEach(b=>b.classList.toggle('current',b.dataset.platform===c));const labels={android:'Android',iphone:'iPhone',windows:'Windows',macos:'macOS'};if(c)$('install-hint').textContent=`Stai usando ${labels[c]}. Puoi comunque scegliere un altro sistema.`;}
+function installInstructions(p){const d={android:{title:'Installa su Android',intro:'Se il browser permette l’installazione, puoi aggiungere FVC Project direttamente alla schermata Home.',steps:['Tocca “Installa app” quando compare la richiesta del browser.','Se non compare, apri il menu ⋮ e scegli “Installa app” o “Aggiungi a schermata Home”.','Conferma l’installazione.']},iphone:{title:'Installa su iPhone',intro:'Su iPhone l’installazione si fa da Safari, senza scaricare un’app dall’App Store.',steps:['Apri FVC Project con Safari.','Tocca il pulsante Condividi.','Scegli “Aggiungi alla schermata Home”.','Conferma con “Aggiungi”.']},windows:{title:'Installa su Windows',intro:'Su Chrome o Edge puoi installare FVC Project come app sul PC.',steps:['Apri FVC Project con Chrome o Edge.','Usa il pulsante di installazione del browser oppure il menu e scegli “Installa app”.','Conferma l’installazione.']},macos:{title:'Installa su macOS',intro:'Su Mac l’installazione dipende dal browser utilizzato.',steps:['Con Chrome o Edge, usa il pulsante di installazione del browser e conferma.','Con Safari, usa File > Aggiungi al Dock.','Dopo l’aggiunta puoi aprire FVC Project dal Dock come un’app.']}};return d[p];}
+function openInstall(p){selectedInstallPlatform=p;const d=installInstructions(p);$('installTitle').textContent=d.title;$('installIntro').textContent=d.intro;$('installSteps').innerHTML=d.steps.map(s=>`<li>${esc(s)}</li>`).join('');$('installAction').textContent=(deferredInstallPrompt&&['android','windows','macos'].includes(p))?'Installa app':'Ho capito';$('installModal').classList.add('show');$('installModal').setAttribute('aria-hidden','false');}
+function closeInstall(){$('installModal').classList.remove('show');$('installModal').setAttribute('aria-hidden','true');}
+document.querySelectorAll('.install-btn').forEach(b=>b.addEventListener('click',()=>openInstall(b.dataset.platform)));$('installClose').onclick=closeInstall;$('installDismiss').onclick=closeInstall;$('installModal').addEventListener('click',e=>{if(e.target===$('installModal'))closeInstall()});
+$('installAction').onclick=async()=>{if(deferredInstallPrompt&&['android','windows','macos'].includes(selectedInstallPlatform)){const q=deferredInstallPrompt;deferredInstallPrompt=null;await q.prompt();try{await q.userChoice}catch(_){}closeInstall();}else closeInstall();};markCurrentInstallPlatform();
 </script>
+
+<div id="installModal" class="install-modal" aria-hidden="true"><div class="install-modal-card"><button class="install-close" id="installClose" type="button" aria-label="Chiudi">×</button><h3 id="installTitle">Installa l'app</h3><p id="installIntro"></p><ol class="install-steps" id="installSteps"></ol><div class="install-modal-actions"><button class="btn" id="installAction" type="button">Installa app</button><button class="btn ghost" id="installDismiss" type="button">Chiudi</button></div></div></div>
 </body></html>
