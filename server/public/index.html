@@ -7,8 +7,8 @@
 <meta name="description" content="Catalogo, offerte e contatti del negozio Fvc Project Srl">
 <meta name="theme-color" content="#10151C">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -609,7 +609,7 @@
 <div class="home-novita">
   <div class="txt">
     <h4>✨ Novità</h4>
-    <p>Abbiamo aggiornato il catalogo e le comunicazioni. Scopri le novità disponibili.</p>
+    <p>Abbiamo aggiornato il catalogo e le offerte. Scopri tutte le novità disponibili.</p>
   </div>
   <a class="btn" href="#offerte">Vedi</a>
 </div>
@@ -672,22 +672,23 @@
   <div class="products" id="products"></div>
 </section>
 
-<!-- ===================== OFFERTE / NOTIFICHE ===================== -->
+<!-- ===================== OFFERTE ===================== -->
 <section id="offerte">
   <div class="section-head">
     <div>
-      <p class="eyebrow">Avvisi</p>
-      <h3>Notifiche</h3>
+      <p class="eyebrow">Promozioni</p>
+      <h3>Offerte del mese</h3>
     </div>
   </div>
 
   <div class="notify-card">
     <div class="txt">
-      <h4>Non perderti le novità</h4>
-      <p>Attiva le notifiche per ricevere un avviso quando ci sono nuove offerte o aggiornamenti.</p>
+      <h4>Non perderti le prossime offerte</h4>
+      <p>Attiva le notifiche per essere avvisato quando arriva uno sconto.</p>
     </div>
-    <button class="btn" id="notify-btn" type="button">Attiva</button>
+    <button class="btn" id="notify-btn">Attiva</button>
   </div>
+
 </section>
 
 <!-- ===================== TELEFONIA & FIBRA ===================== -->
@@ -1119,35 +1120,6 @@
   fetch('/api/config').then(r => r.ok ? r.json() : Promise.reject()).then(applyShopConfig).catch(() => {});
 
 
-  // ---- offerte: caricate dal server (server/data/offers.json).
-  // Se il server non risponde (es. app aperta come semplice file statico),
-  // mostriamo comunque un set di esempio cosi' la sezione non resta vuota. ----
-  const FALLBACK_OFFERS = [
-    { pct:'-15%', title:'Cover e vetri protettivi', desc:'Su tutta la selezione accessori, fino a fine mese.', heat:3 },
-    { pct:'−80€', title:'Permuta il tuo usato', desc:'Valutazione gratuita, sconto immediato sul nuovo acquisto.', heat:2 },
-    { pct:'2x1', title:'Pellicole in vetro temperato', desc:'Acquistane una, la seconda è in regalo.', heat:1 },
-  ];
-  function heatDots(n){
-    let out = '';
-    for (let i=1;i<=4;i++) out += `<span class="${i<=n?'on':''}"></span>`;
-    return out;
-  }
-  function renderOffers(offers){
-    document.getElementById('offers-list').innerHTML = offers.map(o => `
-      <div class="offer">
-        <div class="pct">${o.pct}</div>
-        <div class="body">
-          <h4>${o.title}</h4>
-          <p>${o.desc}</p>
-          <div class="heat">${heatDots(o.heat)}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-  fetch('/api/offers')
-    .then(r => r.ok ? r.json() : Promise.reject())
-    .then(renderOffers)
-    .catch(() => renderOffers(FALLBACK_OFFERS));
 
   // ---- notifiche push in tempo reale ----
   // Il permesso lo chiede il browser, ma l'iscrizione vera e propria viene
@@ -1233,7 +1205,7 @@
       setNotifyState('active');
       reg.showNotification('Fvc Project', {
         body: 'Notifiche attivate. Ti avviseremo delle prossime offerte.',
-        icon: 'icons/icon-192.png'
+        icon: '/icon-192.png'
       });
     } catch (err) {
       console.error('Iscrizione alle notifiche non riuscita:', err);
@@ -1250,39 +1222,8 @@
     });
   }
 
-  // ---- prompt di installazione personalizzato ----
-  let deferredPrompt;
-  const installBar = document.getElementById('install-bar');
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBar.classList.add('show');
-  });
-  document.getElementById('install-btn').addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    installBar.classList.remove('show');
-  });
-  document.getElementById('install-close').addEventListener('click', () => {
-    installBar.classList.remove('show');
-  });
-  window.addEventListener('appinstalled', () => {
-    installBar.classList.remove('show');
-  });
-
-  // ---- iPhone/iPad: niente prompt automatico, mostriamo istruzioni manuali ----
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  const iosBar = document.getElementById('ios-install-bar');
-  if (isIOS && !isStandalone) {
-    iosBar.classList.add('show');
-  }
-  document.getElementById('ios-install-close').addEventListener('click', () => {
-    iosBar.classList.remove('show');
-  });
 </script>
+
 
 <div id="installModal" class="install-modal" aria-hidden="true">
   <div class="install-modal-card">
@@ -1297,125 +1238,180 @@
   </div>
 </div>
 
-
 <script>
-  // ---- Popup installazione: tutti i comandi di chiusura sono attivi ----
-  let selectedInstallPlatform = null;
+  // ---- Installazione PWA: un solo gestore, con fallback specifici per browser Android ----
   let deferredInstallPrompt = null;
+  let selectedInstallPlatform = null;
+  let selectedAndroidBrowser = null;
 
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredInstallPrompt = e;
+  function isStandaloneApp(){
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.matchMedia('(display-mode: fullscreen)').matches ||
+           window.navigator.standalone === true;
+  }
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    updateInstallButtons();
   });
 
-  function detectInstallPlatform() {
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    closeInstallModal();
+    document.querySelectorAll('.install-btn').forEach(btn => btn.classList.remove('current'));
+    const hint = document.getElementById('install-hint');
+    if (hint) hint.textContent = '✓ App installata. Puoi aprirla dalla schermata Home o dalle applicazioni.';
+  });
+
+  function detectDevice(){
     const ua = navigator.userAgent || '';
     const platform = navigator.platform || '';
-    if (/iPhone|iPad|iPod/i.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iphone';
-    if (/Android/i.test(ua)) return 'android';
-    if (/Windows/i.test(ua)) return 'windows';
-    if (/Macintosh|Mac OS X/i.test(ua)) return 'macos';
-    return '';
+    const brands = navigator.userAgentData && Array.isArray(navigator.userAgentData.brands)
+      ? navigator.userAgentData.brands.map(b => b.brand).join(' ')
+      : '';
+    const all = `${ua} ${brands}`;
+
+    if (/iPhone|iPad|iPod/i.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+      return { platform:'iphone', browser:/CriOS/i.test(ua)?'chrome-ios':(/FxiOS/i.test(ua)?'firefox-ios':'safari-ios') };
+    }
+    if (/Android/i.test(ua)) {
+      let browser = 'android-other';
+      if (/SamsungBrowser/i.test(ua)) browser = 'samsung-internet';
+      else if (/MiuiBrowser/i.test(ua)) browser = 'xiaomi-browser';
+      else if (/HeyTapBrowser|OppoBrowser/i.test(ua)) browser = 'realme-oppo-browser';
+      else if (/HONOR|HonorBrowser|HUAWEI|HuaweiBrowser/i.test(all)) browser = 'honor-huawei-browser';
+      else if (/EdgA|EdgiOS/i.test(ua)) browser = 'edge-android';
+      else if (/Firefox/i.test(ua)) browser = 'firefox-android';
+      else if (/Chrome/i.test(ua)) browser = 'chrome-android';
+      return { platform:'android', browser };
+    }
+    if (/Windows/i.test(ua)) return { platform:'windows', browser:/Edg/i.test(ua)?'edge':'chromium' };
+    if (/Macintosh|Mac OS X/i.test(ua)) return { platform:'macos', browser:/Edg/i.test(ua)?'edge':(/Chrome/i.test(ua)?'chrome':'safari') };
+    return { platform:'', browser:'other' };
   }
 
-  function installData(platform) {
-    return {
-      android: {
-        title: 'Installa su Android',
-        intro: 'Puoi aggiungere Fvc Project direttamente alla schermata Home del telefono.',
-        steps: ['Tocca “Installa app” quando compare la richiesta del browser.',
-                'Se non compare, apri il menu ⋮ e scegli “Installa app” o “Aggiungi a schermata Home”.',
-                'Conferma l’installazione.']
+  function installData(platform, browser){
+    const androidFallback = {
+      'samsung-internet': {
+        title:'Installa su Android · Samsung Internet',
+        intro:'Samsung Internet supporta le PWA. Se non compare il prompt automatico, usa il comando di installazione del browser.',
+        steps:['Apri il menu del browser e cerca “Installa app” o “Aggiungi alla schermata Home”.','Conferma l’installazione.','L’app comparirà tra le applicazioni del telefono.']
       },
-      iphone: {
-        title: 'Installa su iPhone',
-        intro: 'Su iPhone usa Safari per aggiungere Fvc Project alla schermata Home.',
-        steps: ['Apri Fvc Project con Safari.',
-                'Tocca il pulsante Condividi.',
-                'Scegli “Aggiungi alla schermata Home”.',
-                'Conferma con “Aggiungi”.']
+      'xiaomi-browser': {
+        title:'Installa su Android · Browser Xiaomi',
+        intro:'Il browser Xiaomi può non mostrare il prompt automatico della PWA. In quel caso usa il comando del browser per aggiungere il sito alla Home.',
+        steps:['Apri il menu del browser.','Scegli “Aggiungi alla schermata Home” o una voce equivalente.','Conferma. Se il browser mostra “Installa app”, usa quella voce.']
       },
-      windows: {
-        title: 'Installa su Windows',
-        intro: 'Con Chrome o Edge puoi installare Fvc Project come app sul PC.',
-        steps: ['Apri Fvc Project con Chrome o Edge.',
-                'Usa il pulsante di installazione del browser oppure il menu e scegli “Installa app”.',
-                'Conferma l’installazione.']
+      'realme-oppo-browser': {
+        title:'Installa su Android · Browser realme/OPPO',
+        intro:'Se il browser non mostra il prompt automatico, usa la funzione del browser per aggiungere il sito alla schermata Home.',
+        steps:['Apri il menu del browser.','Scegli “Aggiungi alla schermata Home” o “Installa app”, se disponibile.','Conferma.']
       },
-      macos: {
-        title: 'Installa su macOS',
-        intro: 'Su Mac l’installazione dipende dal browser utilizzato.',
-        steps: ['Con Chrome o Edge usa il pulsante di installazione del browser e conferma.',
-                'Con Safari usa File > Aggiungi al Dock.',
-                'Dopo l’aggiunta puoi aprire Fvc Project dal Dock come un’app.']
+      'honor-huawei-browser': {
+        title:'Installa su Android · HONOR/Huawei',
+        intro:'Se il browser non espone l’installazione automatica, usa il comando del browser per aggiungere FVC Project alla Home.',
+        steps:['Apri il menu del browser.','Scegli “Aggiungi alla schermata Home” o la voce equivalente.','Conferma l’aggiunta.']
+      },
+      'chrome-android': {
+        title:'Installa su Android · Chrome',
+        intro:'Se il browser ha reso disponibile l’installazione, puoi installare FVC Project direttamente.',
+        steps:['Tocca “Installa app” quando compare il prompt.','Se il prompt non compare, apri il menu ⋮ e scegli “Installa app” o “Aggiungi alla schermata Home”.','Conferma.']
+      },
+      'android-other': {
+        title:'Installa su Android',
+        intro:'Il browser non espone un comando di installazione automatica riconosciuto. Proviamo comunque il metodo standard del browser.',
+        steps:['Apri il menu del browser.','Cerca “Installa app” o “Aggiungi alla schermata Home”.','Conferma l’installazione.']
+      },
+      'edge-android': {
+        title:'Installa su Android · Edge',
+        intro:'Microsoft Edge può installare la PWA quando il sito soddisfa i requisiti del browser.',
+        steps:['Usa il prompt “Installa app”, se compare.','In alternativa apri il menu di Edge e cerca “Installa app”.','Conferma.']
+      },
+      'firefox-android': {
+        title:'Installa su Android · Firefox',
+        intro:'Firefox può offrire un comando di aggiunta alla schermata Home invece del prompt PWA di Chromium.',
+        steps:['Apri il menu del browser.','Scegli “Aggiungi alla schermata Home” se disponibile.','Conferma.']
       }
-    }[platform];
+    };
+
+    if(platform==='android') return androidFallback[browser] || androidFallback['android-other'];
+    if(platform==='iphone') return {
+      title:'Installa su iPhone',
+      intro:'Su iPhone l’installazione della web app si fa da Safari.',
+      steps:['Apri FVC Project con Safari.','Tocca il pulsante Condividi.','Scegli “Aggiungi alla schermata Home”.','Conferma con “Aggiungi”.']
+    };
+    if(platform==='windows') return {
+      title:'Installa su Windows',
+      intro:'Su Chrome o Edge, quando disponibile, l’installazione usa direttamente la PWA: non serve scaricare un file .exe.',
+      steps:['Apri FVC Project con Chrome o Edge.','Tocca “Installa app” quando compare il prompt oppure usa il comando di installazione del browser.','Conferma l’installazione.']
+    };
+    if(platform==='macos') return {
+      title:'Installa su macOS',
+      intro:'Su macOS usiamo la funzione nativa del browser: non serve scaricare un file .dmg.',
+      steps:['Con Chrome o Edge usa “Installa app” se disponibile.','Con Safari usa File > Aggiungi al Dock.','Apri FVC Project dal Dock come una normale app.']
+    };
+    return {title:'Installa l’app',intro:'Scegli il sistema utilizzato per vedere le istruzioni.',steps:[]};
   }
 
-  function escapeInstallText(value) {
-    return String(value).replace(/[&<>'"]/g, c => ({
-      '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
-    }[c]));
+  function escapeInstallText(value){
+    return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   }
 
-  function openInstallModal(platform) {
-    const data = installData(platform);
-    if (!data) return;
+  function updateInstallButtons(){
+    const device = detectDevice();
+    document.querySelectorAll('.install-btn').forEach(btn => btn.classList.toggle('current', btn.dataset.platform === device.platform));
+    const hint = document.getElementById('install-hint');
+    if(isStandaloneApp()){
+      hint.textContent='✓ FVC Project è già installata su questo dispositivo.';
+      return;
+    }
+    if(device.platform){
+      const names={android:'Android',iphone:'iPhone',windows:'Windows',macos:'macOS'};
+      hint.textContent=`Stai usando ${names[device.platform]}. Puoi comunque scegliere un altro sistema.`;
+    }
+  }
+
+  function openInstallModal(platform){
     selectedInstallPlatform = platform;
+    const device = detectDevice();
+    selectedAndroidBrowser = platform === 'android' ? device.browser : null;
+    const data = installData(platform, selectedAndroidBrowser);
     document.getElementById('installTitle').textContent = data.title;
     document.getElementById('installIntro').textContent = data.intro;
-    document.getElementById('installSteps').innerHTML =
-      data.steps.map(step => `<li>${escapeInstallText(step)}</li>`).join('');
-    document.getElementById('installAction').textContent =
-      deferredInstallPrompt && ['android','windows','macos'].includes(platform)
-        ? 'Installa app' : 'Ho capito';
+    document.getElementById('installSteps').innerHTML = data.steps.map(s => `<li>${escapeInstallText(s)}</li>`).join('');
+    const action = document.getElementById('installAction');
+    const canPrompt = Boolean(deferredInstallPrompt) && ['android','windows','macos'].includes(platform);
+    action.textContent = canPrompt ? 'Installa app' : 'Ho capito';
+    action.style.display = (platform === 'iphone' || !canPrompt) ? 'block' : 'block';
     document.getElementById('installModal').classList.add('show');
-    document.getElementById('installModal').setAttribute('aria-hidden', 'false');
+    document.getElementById('installModal').setAttribute('aria-hidden','false');
   }
 
-  function closeInstallModal() {
+  function closeInstallModal(){
     document.getElementById('installModal').classList.remove('show');
-    document.getElementById('installModal').setAttribute('aria-hidden', 'true');
+    document.getElementById('installModal').setAttribute('aria-hidden','true');
   }
 
-  document.querySelectorAll('.install-btn').forEach((button) => {
-    button.addEventListener('click', () => openInstallModal(button.dataset.platform));
-  });
-
-  // X in alto a destra
+  document.querySelectorAll('.install-btn').forEach(btn => btn.addEventListener('click', () => openInstallModal(btn.dataset.platform)));
   document.getElementById('installClose').addEventListener('click', closeInstallModal);
-  // Pulsante Chiudi
   document.getElementById('installDismiss').addEventListener('click', closeInstallModal);
-  // Click sullo sfondo
-  document.getElementById('installModal').addEventListener('click', (event) => {
-    if (event.target === document.getElementById('installModal')) closeInstallModal();
-  });
-  // Tasto ESC
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeInstallModal();
-  });
+  document.getElementById('installModal').addEventListener('click', e => { if(e.target.id==='installModal') closeInstallModal(); });
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeInstallModal(); });
 
   document.getElementById('installAction').addEventListener('click', async () => {
-    if (deferredInstallPrompt && ['android','windows','macos'].includes(selectedInstallPlatform)) {
-      const promptEvent = deferredInstallPrompt;
-      deferredInstallPrompt = null;
+    if(deferredInstallPrompt && ['android','windows','macos'].includes(selectedInstallPlatform)){
+      const promptEvent=deferredInstallPrompt;
+      deferredInstallPrompt=null;
       await promptEvent.prompt();
-      try { await promptEvent.userChoice; } catch (_) {}
+      try{ await promptEvent.userChoice; }catch(_){ }
       closeInstallModal();
-    } else {
+    }else{
       closeInstallModal();
     }
   });
 
-  const currentInstallPlatform = detectInstallPlatform();
-  document.querySelectorAll('.install-btn').forEach((button) => {
-    button.classList.toggle('current', button.dataset.platform === currentInstallPlatform);
-  });
-  if (currentInstallPlatform) {
-    const names = {android:'Android', iphone:'iPhone', windows:'Windows', macos:'macOS'};
-    document.getElementById('install-hint').textContent =
-      `Stai usando ${names[currentInstallPlatform]}. Puoi comunque scegliere un altro sistema.`;
-  }
+  updateInstallButtons();
 </script>
 
 </body>

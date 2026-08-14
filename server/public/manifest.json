@@ -1,1 +1,26 @@
-{"name":"FVC Project","short_name":"FVC","start_url":"/","display":"standalone","background_color":"#101827","theme_color":"#101827","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]}
+{
+  "id": "/",
+  "name": "FVC Project",
+  "short_name": "FVC",
+  "description": "Catalogo, offerte e contatti di FVC Project",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101827",
+  "theme_color": "#101827",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
