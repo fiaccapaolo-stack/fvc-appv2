@@ -577,23 +577,23 @@
   <p class="lead">Catalogo aggiornato, offerte in tempo reale e il negozio a un tap di distanza.</p>
 
   <nav class="quicktiles">
-    <a class="tile" href="#catalogo">
+    <a class="tile" href="catalogo.html?cat=smartphone">
       <span class="glyph">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="6" y="2" width="12" height="20" rx="2.5" stroke="#D4AF37" stroke-width="1.6"/><line x1="10" y1="18.5" x2="14" y2="18.5" stroke="#D4AF37" stroke-width="1.6" stroke-linecap="round"/></svg>
       </span>
-      <span class="label">Catalogo</span>
+      <span class="label">Smartphone</span>
     </a>
-    <a class="tile" href="#offerte">
+    <a class="tile" href="offerte.html">
       <span class="glyph">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 8.5L21 11L14.5 13.5L12 20L9.5 13.5L3 11L9.5 8.5L12 2Z" stroke="#D4AF37" stroke-width="1.5" stroke-linejoin="round"/></svg>
       </span>
       <span class="label">Offerte</span>
     </a>
-    <a class="tile" href="#telefonia">
+    <a class="tile" href="catalogo.html?cat=accessori">
       <span class="glyph">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 5c0 8 7 15 15 15l2-4-5-2-1.5 1.5A11 11 0 0 1 9.5 10L11 8.5 9 3.5 5 4Z" stroke="#D4AF37" stroke-width="1.5" stroke-linejoin="round"/></svg>
       </span>
-      <span class="label">Telefonia &amp; Fibra</span>
+      <span class="label">Accessori</span>
     </a>
     <a class="tile" href="#negozio">
       <span class="glyph">
@@ -611,7 +611,7 @@
     <h4>✨ Novità</h4>
     <p>Abbiamo aggiornato il catalogo e le offerte. Scopri tutte le novità disponibili.</p>
   </div>
-  <a class="btn" href="#offerte">Vedi</a>
+  <a class="btn" href="offerte.html">Vedi</a>
 </div>
 
 <!-- ===================== INSTALLA APP ===================== -->
@@ -672,23 +672,10 @@
   <div class="products" id="products"></div>
 </section>
 
-<!-- ===================== OFFERTE ===================== -->
-<section id="offerte">
-  <div class="section-head">
-    <div>
-      <p class="eyebrow">Promozioni</p>
-      <h3>Offerte del mese</h3>
-    </div>
-  </div>
-
-  <div class="notify-card">
-    <div class="txt">
-      <h4>Non perderti le prossime offerte</h4>
-      <p>Attiva le notifiche per essere avvisato quando arriva uno sconto.</p>
-    </div>
-    <button class="btn" id="notify-btn">Attiva</button>
-  </div>
-
+<!-- ===================== NOTIFICHE ===================== -->
+<section id="notifiche">
+  <div class="section-head"><div><p class="eyebrow">Aggiornamenti</p><h3>Notifiche</h3></div></div>
+  <div class="notify-card"><div class="txt"><h4>Non perderti le novità</h4><p>Attiva le notifiche per ricevere gli aggiornamenti del negozio.</p></div><button class="btn" id="notify-btn">Attiva</button></div>
 </section>
 
 <!-- ===================== TELEFONIA & FIBRA ===================== -->
@@ -710,6 +697,7 @@
   </div>
 
   <div id="carrier-plans"></div>
+  <div style="margin-top:14px"><a class="btn ghost" href="offerte.html">Vedi tutte le offerte</a></div>
 </section>
 
 <!-- ===================== NEGOZIO ===================== -->
@@ -773,13 +761,6 @@
 <div id="lightbox">
   <button id="lightbox-close" aria-label="Chiudi">×</button>
   <img id="lightbox-img" alt="">
-</div>
-
-<div id="product-modal">
-  <div class="product-modal-card">
-    <button id="product-modal-close" aria-label="Chiudi">×</button>
-    <div id="product-modal-body"></div>
-  </div>
 </div>
 
 <div id="install-bar">
@@ -1017,11 +998,13 @@
     if (e.target.id === 'product-modal') closeProductModal();
   });
   document.getElementById('products').addEventListener('click', (e) => {
-    if (e.target.closest('img.zoomable')) return; // il tap sulla foto apre lo zoom, non il popup
+    if (e.target.closest('img.zoomable')) return;
     const card = e.target.closest('.product-card');
     if (!card) return;
-    const p = CATALOG[card.dataset.cat][Number(card.dataset.index)];
-    if (p) openProductModal(p);
+    const cat = card.dataset.cat || 'smartphone';
+    const index = Number(card.dataset.index);
+    if (!Number.isInteger(index)) return;
+    window.location.href = `dettaglio.html?kind=product&cat=${encodeURIComponent(cat)}&i=${index}`;
   });
 
   // ---- telefonia & fibra: piani per gestore ----
@@ -1104,14 +1087,27 @@
     const footerEl = document.getElementById('shop-footer');
     if (footerEl) footerEl.innerHTML = `${cfg.shopName} · ${cfg.address}`;
 
-    if (cfg.products) {
-      CATALOG = cfg.products;
+    if (Array.isArray(cfg.products)) {
+      const products = cfg.products;
+      const catOf = p => String(p.category || p.cat || p.type || '').toLowerCase();
+      CATALOG = {
+        smartphone: products.filter(p => !catOf(p) || ['smartphone','telefono','phone'].includes(catOf(p))),
+        accessori: products.filter(p => ['accessori','accessory','accessories'].includes(catOf(p))),
+        ricambi: products.filter(p => ['ricambi','repair','spare'].includes(catOf(p)))
+      };
       const activeTab = document.querySelector('#tabs .tab.active');
       renderCatalog(activeTab ? activeTab.dataset.cat : 'smartphone');
     }
 
-    if (cfg.carriers) {
-      CARRIERS = cfg.carriers;
+    if (Array.isArray(cfg.plans)) {
+      const grouped = {};
+      cfg.plans.forEach(p => {
+        const key = String(p.carrier || '').toLowerCase().replace(/[^a-z]/g,'');
+        const aliases = {windtre:'wind',wind:'wind',tim:'tim',sky:'sky',lycamobile:'lyca',lyca:'lyca',verymobile:'very',very:'very',kena:'kena'};
+        const carrier = aliases[key] || key || 'altro';
+        (grouped[carrier] ||= []).push(p);
+      });
+      CARRIERS = grouped;
       const activeCarrierTab = document.querySelector('#carrier-tabs .tab.active');
       renderCarrierPlans(activeCarrierTab ? activeCarrierTab.dataset.carrier : 'tim');
     }
@@ -1222,6 +1218,38 @@
     });
   }
 
+  // ---- prompt di installazione personalizzato ----
+  let deferredPrompt;
+  const installBar = document.getElementById('install-bar');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBar.classList.add('show');
+  });
+  document.getElementById('install-btn').addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBar.classList.remove('show');
+  });
+  document.getElementById('install-close').addEventListener('click', () => {
+    installBar.classList.remove('show');
+  });
+  window.addEventListener('appinstalled', () => {
+    installBar.classList.remove('show');
+  });
+
+  // ---- iPhone/iPad: niente prompt automatico, mostriamo istruzioni manuali ----
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const iosBar = document.getElementById('ios-install-bar');
+  if (isIOS && !isStandalone) {
+    iosBar.classList.add('show');
+  }
+  document.getElementById('ios-install-close').addEventListener('click', () => {
+    iosBar.classList.remove('show');
+  });
 </script>
 
 
