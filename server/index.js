@@ -1,35 +1,320 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><link rel="manifest" href="/manifest.json"><title>FVC Project</title><style>
-:root{--bg:#101827;--panel:#172235;--line:#31415b;--gold:#d4af37;--text:#f6f7fb;--muted:#aebbd0}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,sans-serif}header,main,footer{max-width:900px;margin:auto;padding:20px}.hero{padding:36px 20px 28px;background:linear-gradient(140deg,#182942,#101827)}h1,h2,h3,p{margin-top:0}.eyebrow{color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.1em}.tiles,.grid,.news{display:grid;gap:12px}.tiles{grid-template-columns:repeat(3,1fr)}.tile,.card,.news article{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px}.tile{color:inherit;text-decoration:none;text-align:center}.news article{border-color:#806d2d}.news h4{color:var(--gold);margin:0 0 6px}.muted{color:var(--muted)}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}input,select,button{font:inherit;border-radius:9px;padding:10px;border:1px solid var(--line)}input,select{background:#0e1727;color:var(--text);flex:1}button{background:var(--gold);color:#111827;border:0;font-weight:700;cursor:pointer}.grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}.product img{width:100%;height:130px;object-fit:contain;border-radius:10px;background:white}.product h4{margin:10px 0 5px}.price{font-size:18px;color:var(--gold);font-weight:700}.rate{font-size:13px;color:var(--muted)}.plan{display:flex;justify-content:space-between;gap:12px;align-items:center}.clickable{cursor:pointer;transition:transform .12s,border-color .12s}.clickable:hover{transform:translateY(-2px);border-color:var(--gold)}.detail-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:1000}.detail-backdrop.open{display:flex}.detail-modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.45)}.detail-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.detail-close{background:transparent;color:var(--text);border:1px solid var(--line);padding:7px 11px}.detail-image{width:100%;max-height:300px;object-fit:contain;background:white;border-radius:12px;margin:14px 0}.detail-list{display:grid;gap:8px;margin:14px 0}.detail-row{display:flex;justify-content:space-between;gap:15px;padding:9px 0;border-bottom:1px solid var(--line)}.detail-row span:first-child{color:var(--muted)}.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.detail-actions a{text-decoration:none}.qr{display:flex;gap:20px;align-items:center}.qr img{width:130px;background:white;padding:8px;border-radius:10px}@media(max-width:550px){.tiles{grid-template-columns:1fr}.qr{align-items:flex-start}.hero{padding-top:24px}.detail-modal{padding:16px}.detail-row{display:block}.detail-row span{display:block;margin-bottom:3px}}
-</style></head><body><header class="hero"><p class="eyebrow">Telefonia e assistenza</p><h1 id="shop">FVC Project</h1><p class="muted">Catalogo, offerte e novità sempre aggiornati.</p><nav class="tiles"><a class="tile" href="#catalogo">Catalogo</a><a class="tile" href="#telefonia">Telefonia & Fibra</a><a class="tile" href="#offerte">Offerte</a></nav></header><main>
-<section id="novita" hidden><p class="eyebrow">Appena aggiornato</p><h2>Novità</h2><div class="news" id="news"></div></section>
-<section id="catalogo"><p class="eyebrow">Smartphone e accessori</p><h2>Catalogo</h2><div class="toolbar"><input id="search" type="search" placeholder="Cerca marca o modello"><select id="brand"><option value="">Tutte le marche</option></select></div><div class="grid" id="products"></div></section>
-<section id="telefonia"><p class="eyebrow">Mobile e fibra</p><h2>Telefonia & Fibra</h2><div class="news" id="plans"></div></section>
-<section id="offerte"><p class="eyebrow">Promozioni</p><h2>Offerte del mese</h2><div class="news" id="offers"></div></section>
-<section class="qr"><img src="/api/qr" alt="QR code dell'app"><div><h2>Porta FVC sempre con te</h2><p class="muted">Inquadra il QR code per aprire l'app sul tuo smartphone.</p><button id="push">Attiva notifiche</button></div></section>
-</main><footer><p class="muted" id="contacts"></p><p><a href="/admin.html" style="color:#aebbd0">Area riservata</a></p></footer>
-<div id="detailBackdrop" class="detail-backdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="detail-modal"><div class="detail-head"><div><p class="eyebrow" id="detailType">Dettaglio</p><h2 id="detailTitle"></h2></div><button class="detail-close" id="detailClose" aria-label="Chiudi">✕</button></div><div id="detailBody"></div></div></div>
-<script>
-let cfg={products:[],offers:[],plans:[],news:[]};
-const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-function row(l,v){return v?`<div class="detail-row"><span>${esc(l)}</span><strong>${esc(v)}</strong></div>`:''}
-function openDetail(type,item){$('detailType').textContent=type;$('detailTitle').textContent=item.name||item.title||'Dettaglio';let h='';
-if(item.image)h+=`<img class="detail-image" src="${esc(item.image)}" alt="">`;
-if(type==='Prodotto'){h+=`<div class="detail-list">${row('Marca',item.brand)}${row('Specifiche',item.spec)}${row('Prezzo',item.price)}${row('Disponibilità',item.stock?item.stock+' disponibili':'')}</div>`;if(item.installments?.length)h+='<h3>Rate</h3><div class="detail-list">'+item.installments.map(r=>row(r.months||'Rata',r.amount)).join('')+'</div>'}
-else if(type==='Telefonia / Fibra'){h+=`<div class="detail-list">${row('Gestore',item.carrier)}${row('Tipo',item.type==='fibra'?'Fibra':'Mobile')}${row('Prezzo',item.price)}</div><p class="muted">${esc(item.details||'')}</p>`;if(item.file&&item.fileName)h+=`<div class="detail-actions"><a href="${esc(item.file)}" target="_blank" rel="noopener"><button>Apri ${esc(item.fileName)}</button></a></div>`}
-else{h+=`<div class="detail-list">${row('Sconto',item.pct)}</div><p class="muted">${esc(item.description||item.desc||'')}</p>`}
-$('detailBody').innerHTML=h;$('detailBackdrop').classList.add('open');document.body.style.overflow='hidden'}
-function closeDetail(){$('detailBackdrop').classList.remove('open');document.body.style.overflow=''}
-function render(){const q=$('search').value.toLowerCase(),b=$('brand').value,fp=cfg.products.filter(p=>`${p.name} ${p.brand}`.toLowerCase().includes(q)&&(!b||p.brand===b));
-$('products').innerHTML=fp.map(p=>`<article class="card product clickable" data-kind="product" data-index="${cfg.products.indexOf(p)}" tabindex="0" role="button">${p.image?`<img src="${esc(p.image)}" alt="">`:''}<h4>${esc(p.name)}</h4><p class="muted">${esc(p.brand||'')} ${esc(p.spec||'')}</p><div class="price">${esc(p.price)}</div>${p.rate?`<div class="rate">A rate: ${esc(p.rate)}</div>`:''}<p class="muted">Tocca per vedere i dettagli</p></article>`).join('')||'<p class="muted">Nessun prodotto trovato.</p>';
-$('plans').innerHTML=cfg.plans.map((p,i)=>`<article class="card plan clickable" data-kind="plan" data-index="${i}" tabindex="0" role="button"><div><b>${esc(p.name)}</b><p class="muted">${esc(p.details)}</p></div><b class="price">${esc(p.price)}</b></article>`).join('')||'<p class="muted">Nessuna offerta disponibile.</p>';
-$('offers').innerHTML=cfg.offers.map((o,i)=>`<article class="card clickable" data-kind="offer" data-index="${i}" tabindex="0" role="button"><h4>${esc(o.title)}</h4><b class="price">${esc(o.pct)}</b><p class="muted">${esc(o.description||o.desc||'')}</p><p class="muted">Tocca per vedere i dettagli</p></article>`).join('')||'<p class="muted">Nessuna promozione disponibile.</p>'}
-function handleCard(e){const c=e.target.closest('[data-kind]');if(!c)return;const i=+c.dataset.index,k=c.dataset.kind;if(k==='product')openDetail('Prodotto',cfg.products[i]);else if(k==='plan')openDetail('Telefonia / Fibra',cfg.plans[i]);else openDetail('Offerta',cfg.offers[i])}
-$('products').onclick=$('plans').onclick=$('offers').onclick=handleCard;$('products').onkeydown=$('plans').onkeydown=$('offers').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();handleCard(e)}};
-$('detailClose').onclick=closeDetail;$('detailBackdrop').onclick=e=>{if(e.target===$('detailBackdrop'))closeDetail()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
-function renderNews(a){if(!a?.length)return;$('novita').hidden=false;$('news').innerHTML=a.map(n=>`<article><h4>${esc(n.title)}</h4><p class="muted">${esc(n.description)}</p><button data-go="${esc(n.section)}">Vedi</button></article>`).join('')}
-$('news').onclick=e=>{const s=e.target.dataset.go;if(s)location.hash=s};
-async function init(){const r=await fetch('/api/config');if(!r.ok)throw Error('Impossibile caricare la configurazione');cfg=await r.json();$('shop').textContent=cfg.shopName||'FVC Project';$('contacts').textContent=[cfg.address,cfg.phone,cfg.whatsapp].filter(Boolean).join(' · ');[...new Set((cfg.products||[]).map(p=>p.brand).filter(Boolean))].sort().forEach(x=>$('brand').add(new Option(x,x)));render();renderNews(cfg.news)}
-$('search').oninput=render;$('brand').onchange=render;init().catch(console.error);
-$('push').onclick=async()=>{if(!('serviceWorker'in navigator)||!('PushManager'in window))return alert('Notifiche non supportate');const key=(await fetch('/api/vapid-public-key').then(r=>r.json())).publicKey;if(!key)return alert('Notifiche da configurare su Render');const p=await Notification.requestPermission();if(p!=='granted')return;const reg=await navigator.serviceWorker.ready;const bytes=Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes});await fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sub)});$('push').textContent='Notifiche attive ✓'};
-if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js');
-</script></body></html>
+// FVC Project Srl — backend v2
+const express = require("express");
+const webpush = require("web-push");
+const fs = require("fs");
+const path = require("path");
+const { Redis } = require("@upstash/redis");
+const QRCode = require("qrcode");
+
+const ROOT = path.join(__dirname, "public");
+const DATA_DIR = path.join(__dirname, "data");
+const SEED_OFFERS_FILE = path.join(DATA_DIR, "offers.json");
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+function readJSON(file, fallback) {
+  try { return JSON.parse(fs.readFileSync(file, "utf8")); }
+  catch { return fallback; }
+}
+
+async function getVapidKeys() {
+  const stored = await redis.get("vapid_keys");
+  if (stored) return typeof stored === "string" ? JSON.parse(stored) : stored;
+  const keys = webpush.generateVAPIDKeys();
+  await redis.set("vapid_keys", JSON.stringify(keys));
+  return keys;
+}
+
+async function getSubscriptions() {
+  const all = await redis.hgetall("subscriptions");
+  if (!all) return [];
+  return Object.values(all).map(v => typeof v === "string" ? JSON.parse(v) : v);
+}
+async function addSubscription(sub) {
+  await redis.hset("subscriptions", { [sub.endpoint]: JSON.stringify(sub) });
+}
+async function removeSubscription(endpoint) {
+  await redis.hdel("subscriptions", endpoint);
+}
+
+async function getOffers() {
+  const all = await redis.hgetall("offers");
+  if (!all) return [];
+  const offers = Object.values(all).map(v => typeof v === "string" ? JSON.parse(v) : v);
+  offers.sort((a,b) => (a.createdAt || 0) - (b.createdAt || 0));
+  return offers;
+}
+async function saveOffer(offer) {
+  await redis.hset("offers", { [offer.id]: JSON.stringify(offer) });
+}
+async function deleteOffer(id) {
+  await redis.hdel("offers", id);
+}
+async function seedOffersIfEmpty() {
+  if ((await getOffers()).length) return;
+  const seed = readJSON(SEED_OFFERS_FILE, []);
+  for (const offer of seed) await saveOffer({ ...offer, createdAt: Date.now() });
+}
+
+const DEFAULT_CONFIG = {
+  shopName: "Fvc Project Srl",
+  address: "Viale Indipendenza 57/a, 63100 Ascoli Piceno",
+  phone: "0736 46354",
+  phoneE164: "+39073646354",
+  whatsapp: "333 123 456",
+  whatsappLink: "https://wa.me/39333123456",
+  publicUrl: "",
+  hours: [
+    { label: "Lunedì", value: "15:30 – 19:30" },
+    { label: "Martedì – Sabato", value: "9:00 – 13:00, 15:30 – 19:30" },
+    { label: "Domenica", value: "Chiuso" }
+  ],
+  products: [],
+  plans: [],
+  news: []
+};
+
+function normalizePhone(raw) {
+  const digits = String(raw || "").replace(/\D/g, "");
+  if (!digits) return "";
+  return digits.startsWith("39") ? `+${digits}` : `+39${digits}`;
+}
+
+/*
+ * Compatibilità con i dati già presenti su Upstash:
+ * - vecchio products.smartphone -> nuovo products[]
+ * - vecchio carriers.* -> nuovo plans[]
+ * - installments non viene più usato come catalogo separato
+ *
+ * Non vengono reintrodotti prodotti di default: se il catalogo era stato
+ * svuotato, rimane vuoto.
+ */
+function normalizeProducts(list) {
+  return (Array.isArray(list) ? list : []).map(p => ({
+    ...p,
+    installments: Array.isArray(p.installments) ? p.installments : [],
+    rate: p.rate || p.installments?.[0]?.amount || ""
+  }));
+}
+
+function migrateConfig(parsed) {
+  const oldProducts = parsed && parsed.products;
+  const rawProducts = Array.isArray(oldProducts)
+    ? oldProducts
+    : Array.isArray(oldProducts?.smartphone) ? oldProducts.smartphone : [];
+  const products = normalizeProducts(rawProducts);
+
+  const oldCarriers = parsed?.carriers || {};
+  const plans = Array.isArray(parsed?.plans)
+    ? parsed.plans
+    : Object.entries(oldCarriers).flatMap(([carrier, items]) =>
+        Array.isArray(items) ? items.map(p => ({ ...p, carrier })) : []
+      );
+
+  return {
+    ...DEFAULT_CONFIG,
+    ...(parsed || {}),
+    products,
+    plans,
+    news: Array.isArray(parsed?.news) ? parsed.news : []
+  };
+}
+
+async function getConfig() {
+  const stored = await redis.get("config");
+  if (!stored) return { ...DEFAULT_CONFIG };
+  const parsed = typeof stored === "string" ? JSON.parse(stored) : stored;
+  return migrateConfig(parsed);
+}
+
+async function saveConfig(config) {
+  await redis.set("config", JSON.stringify({
+    ...DEFAULT_CONFIG,
+    ...config,
+    products: normalizeProducts(config.products),
+    plans: Array.isArray(config.plans) ? config.plans : [],
+    news: Array.isArray(config.news) ? config.news : []
+  }));
+}
+
+async function seedConfigIfEmpty() {
+  const stored = await redis.get("config");
+  if (stored) return;
+  await saveConfig(DEFAULT_CONFIG);
+}
+
+async function sendToAll(payload) {
+  const subs = await getSubscriptions();
+  for (const sub of subs) {
+    try {
+      await webpush.sendNotification(sub, JSON.stringify(payload));
+    } catch (err) {
+      if (err.statusCode === 404 || err.statusCode === 410) {
+        await removeSubscription(sub.endpoint);
+      } else {
+        console.error("Errore invio notifica:", err.statusCode, err.body || err.message);
+      }
+    }
+  }
+}
+
+function requireAdmin(req, res, next) {
+  const provided = req.header("x-admin-password");
+  if (!process.env.ADMIN_PASSWORD || provided !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "Password non corretta" });
+  }
+  next();
+}
+
+function publicConfig(cfg, offers) {
+  return {
+    ...cfg,
+    products: Array.isArray(cfg.products) ? cfg.products : [],
+    plans: Array.isArray(cfg.plans) ? cfg.plans : [],
+    offers: offers.map(o => ({
+      id: o.id,
+      pct: o.pct || "",
+      title: o.title || "",
+      description: o.description ?? o.desc ?? "",
+      heat: Number(o.heat) || 1,
+      createdAt: o.createdAt || 0
+    })),
+    news: Array.isArray(cfg.news) ? cfg.news : []
+  };
+}
+
+async function main() {
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    throw new Error("Mancano UPSTASH_REDIS_REST_URL e UPSTASH_REDIS_REST_TOKEN");
+  }
+  if (!process.env.ADMIN_PASSWORD) console.warn("ADMIN_PASSWORD non impostata.");
+
+  const vapidKeys = await getVapidKeys();
+  webpush.setVapidDetails(
+    "mailto:negozio@example.com",
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
+  );
+
+  await seedOffersIfEmpty();
+  await seedConfigIfEmpty();
+
+  const app = express();
+  app.use(express.json({ limit: "8mb" }));
+  app.use(express.static(ROOT));
+
+  app.get("/api/qr", async (req, res) => {
+    try {
+      const cfg = await getConfig();
+      const appUrl = cfg.publicUrl || `${req.protocol}://${req.get("host")}`;
+      const png = await QRCode.toBuffer(appUrl, { width: 700, margin: 2 });
+      res.type("png").send(png);
+    } catch (err) {
+      console.error("Errore QR:", err);
+      res.status(500).json({ error: "Impossibile generare il QR code" });
+    }
+  });
+
+  app.get("/api/vapid-public-key", (req,res) => res.json({ publicKey: vapidKeys.publicKey }));
+
+  app.get("/api/offers", async (req,res) => res.json(await getOffers()));
+
+  app.get("/api/config", async (req,res) => {
+    res.json(publicConfig(await getConfig(), await getOffers()));
+  });
+
+  app.post("/api/subscribe", async (req,res) => {
+    const sub = req.body;
+    if (!sub || !sub.endpoint) return res.status(400).json({error:"Iscrizione non valida"});
+    await addSubscription(sub);
+    res.status(201).json({ok:true});
+  });
+
+  app.post("/api/unsubscribe", async (req,res) => {
+    const {endpoint} = req.body || {};
+    if (endpoint) await removeSubscription(endpoint);
+    res.json({ok:true});
+  });
+
+  app.post("/api/admin/check", requireAdmin, (req,res) => res.json({ok:true}));
+
+  app.get("/api/admin/config", requireAdmin, async (req,res) => {
+    res.json(publicConfig(await getConfig(), await getOffers()));
+  });
+
+  app.put("/api/admin/config", requireAdmin, async (req,res) => {
+    const current = await getConfig();
+    const {notify, ...body} = req.body || {};
+    const updated = {
+      ...current,
+      ...body,
+      products: Array.isArray(body.products) ? body.products : current.products,
+      plans: Array.isArray(body.plans) ? body.plans : current.plans,
+      news: Array.isArray(body.news) ? body.news : current.news
+    };
+    if (body.phone !== undefined) {
+      updated.phoneE164 = normalizePhone(body.phone);
+    }
+    if (body.whatsapp !== undefined) {
+      const n = normalizePhone(body.whatsapp);
+      updated.whatsappLink = n ? `https://wa.me/${n.replace("+","")}` : "";
+    }
+    await saveConfig(updated);
+    if (notify?.body) {
+      await sendToAll({title: notify.title || `${updated.shopName} · Novità`, body: notify.body});
+    }
+    res.json(publicConfig(updated, await getOffers()));
+  });
+
+  app.get("/api/admin/offers", requireAdmin, async (req,res) => res.json(await getOffers()));
+
+  app.post("/api/admin/offers", requireAdmin, async (req,res) => {
+    const {id,pct,title,desc,description,heat} = req.body || {};
+    if (!id || !pct || !title) return res.status(400).json({error:"Compila almeno id, sconto e titolo"});
+    const existing = await getOffers();
+    if (existing.some(o => o.id === id)) return res.status(409).json({error:"Esiste già un'offerta con questo id"});
+    const offer = {id,pct,title,desc:description ?? desc ?? "",heat:Number(heat)||1,createdAt:Date.now()};
+    await saveOffer(offer);
+    res.status(201).json(offer);
+  });
+
+  app.put("/api/admin/offers/:id", requireAdmin, async (req,res) => {
+    const existing = await getOffers();
+    const current = existing.find(o => o.id === req.params.id);
+    if (!current) return res.status(404).json({error:"Offerta non trovata"});
+    const {pct,title,desc,description,heat} = req.body || {};
+    const updated = {
+      ...current,
+      pct: pct ?? current.pct,
+      title: title ?? current.title,
+      desc: description ?? desc ?? current.desc ?? "",
+      heat: heat !== undefined ? Number(heat) : current.heat
+    };
+    await saveOffer(updated);
+    res.json(updated);
+  });
+
+  app.delete("/api/admin/offers/:id", requireAdmin, async (req,res) => {
+    await deleteOffer(req.params.id);
+    res.json({ok:true});
+  });
+
+  app.post("/api/admin/notify", requireAdmin, async (req,res) => {
+    const {title,body} = req.body || {};
+    if (!body) return res.status(400).json({error:"Scrivi almeno il testo del messaggio"});
+    const cfg = await getConfig();
+    await sendToAll({title:title || `${cfg.shopName} · Novità`,body});
+    res.json({ok:true});
+  });
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`FVC App v2 backend attivo sulla porta ${PORT}`));
+}
+
+main().catch(err => {
+  console.error("Avvio server fallito:", err);
+  process.exit(1);
+});
