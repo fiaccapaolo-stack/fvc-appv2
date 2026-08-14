@@ -479,28 +479,93 @@
   .catalog-no-results{padding:12px 0;color:var(--text-dim);font-size:13px;}
 
 
-  /* installazione app per sistema operativo */
-  .install-app-section{padding-top:28px;}
-  .install-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .install-btn{width:100%;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:14px;padding:14px 10px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;font-family:var(--font-body);transition:border-color .15s ease,transform .15s ease;}
-  .install-btn:hover{border-color:var(--gold);}.install-btn:active{transform:scale(.98);}
-  .install-btn.current{border-color:var(--gold);box-shadow:0 0 0 1px rgba(212,175,55,.18) inset;}
-  .install-icon{width:36px;height:36px;border-radius:10px;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto;}
-  .install-btn strong{display:block;font-size:13px;margin-bottom:3px;}.install-btn small{display:block;color:var(--text-dim);font-size:10.5px;line-height:1.25;}
-  .install-hint{margin:12px 0 0;color:var(--text-dim);font-size:11.5px;line-height:1.45;}
-  .install-modal{position:fixed;inset:0;background:rgba(5,8,12,.78);display:none;align-items:flex-end;justify-content:center;padding:0;z-index:3000;}
-  .install-modal.show{display:flex;}.install-modal-card{width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:22px 20px 26px;position:relative;}
-  .install-modal-card h3{font-family:var(--font-display);font-size:22px;margin:0 42px 8px 0;}.install-modal-card p{color:var(--text-dim);font-size:13px;line-height:1.5;}
-  .install-steps{margin:14px 0 0;padding-left:20px;color:var(--text);font-size:13px;line-height:1.65;}
-  .install-close{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface-alt);color:var(--text);font-size:19px;cursor:pointer;}
-  .install-modal-actions{display:flex;gap:8px;margin-top:18px;}.install-modal-actions .btn{flex:1;}
-  @media(max-width:420px){.install-grid{grid-template-columns:1fr;}}
+/* ---- Novità: card sintetica in home ---- */
+.home-novita{
+  margin:0 24px 8px;
+  background:linear-gradient(135deg,var(--surface-alt),var(--surface));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.home-novita .txt{flex:1;}
+.home-novita h4{margin:0 0 4px;font-size:14.5px;font-weight:600;}
+.home-novita p{margin:0;font-size:12.5px;color:var(--text-dim);line-height:1.4;}
+.home-novita .btn{flex:0 0 auto;}
+
+/* ---- Installazione: quattro sistemi ---- */
+.home-install{
+  padding-top:28px;
+  padding-bottom:22px;
+}
+.install-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.install-btn{
+  width:100%;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  border-radius:14px;
+  padding:14px 10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-align:left;
+  cursor:pointer;
+  font-family:var(--font-body);
+  transition:transform .15s ease,border-color .15s ease;
+}
+.install-btn:hover{border-color:var(--gold);}
+.install-btn:active{transform:scale(.98);}
+.install-btn.current{border-color:var(--gold);box-shadow:0 0 0 1px rgba(212,175,55,.18) inset;}
+.install-icon{
+  width:36px;height:36px;border-radius:10px;background:var(--surface-alt);
+  display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto;
+}
+.install-btn strong{display:block;font-size:13px;margin-bottom:3px;}
+.install-btn small{display:block;color:var(--text-dim);font-size:10.5px;line-height:1.25;}
+.install-hint{margin:12px 0 0;color:var(--text-dim);font-size:11.5px;line-height:1.45;}
+
+.install-modal{
+  position:fixed;inset:0;background:rgba(5,8,12,.78);
+  display:none;align-items:flex-end;justify-content:center;
+  z-index:3000;
+}
+.install-modal.show{display:flex;}
+.install-modal-card{
+  width:min(560px,100%);max-height:88vh;overflow:auto;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px 20px 0 0;padding:22px 20px 26px;position:relative;
+}
+.install-modal-card h3{
+  font-family:var(--font-display);font-size:22px;margin:0 42px 8px 0;
+}
+.install-modal-card p{color:var(--text-dim);font-size:13px;line-height:1.5;}
+.install-steps{margin:14px 0 0;padding-left:20px;color:var(--text);font-size:13px;line-height:1.65;}
+.install-close{
+  position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--border);background:var(--surface-alt);
+  color:var(--text);font-size:19px;cursor:pointer;
+}
+.install-modal-actions{display:flex;gap:8px;margin-top:18px;}
+.install-modal-actions .btn{flex:1;}
+@media(max-width:420px){.install-grid{grid-template-columns:1fr;}}
+
 </style>
-<style>.page{display:none}.qr-link{padding:24px}.back{display:inline-block;margin-bottom:16px;text-decoration:none;color:var(--cyan)}.product-card{cursor:pointer}</style></head>
+</head>
 <body>
+
 <div class="statusbar">
-  <span id="clock"></span>
-  <span class="icons"><span class="signalbars"><span></span><span></span><span></span><span></span></span><span class="battery"><i></i></span></span>
+  <span id="clock">09:41</span>
+  <span class="icons">
+    <span class="signalbars"><span></span><span></span><span></span><span></span></span>
+    <span class="battery"><i></i></span>
+  </span>
 </div>
 
 <header class="hero">
@@ -510,93 +575,204 @@
   </div>
   <h2>Il tuo negozio di telefonia, <span class="accent">sempre in tasca.</span></h2>
   <p class="lead">Catalogo aggiornato, offerte in tempo reale e il negozio a un tap di distanza.</p>
+
   <nav class="quicktiles">
-    <a class="tile" href="#catalogo"><span class="glyph">📱</span><span class="label">Catalogo</span></a>
-    <a class="tile" href="#offerte"><span class="glyph">✨</span><span class="label">Offerte</span></a>
-    <a class="tile" href="#telefonia"><span class="glyph">📞</span><span class="label">Telefonia &amp; Fibra</span></a>
-    <a class="tile" href="#negozio"><span class="glyph">📍</span><span class="label">Negozio</span></a>
+    <a class="tile" href="#catalogo">
+      <span class="glyph">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="6" y="2" width="12" height="20" rx="2.5" stroke="#D4AF37" stroke-width="1.6"/><line x1="10" y1="18.5" x2="14" y2="18.5" stroke="#D4AF37" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </span>
+      <span class="label">Catalogo</span>
+    </a>
+    <a class="tile" href="#offerte">
+      <span class="glyph">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 8.5L21 11L14.5 13.5L12 20L9.5 13.5L3 11L9.5 8.5L12 2Z" stroke="#D4AF37" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="label">Offerte</span>
+    </a>
+    <a class="tile" href="#telefonia">
+      <span class="glyph">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 5c0 8 7 15 15 15l2-4-5-2-1.5 1.5A11 11 0 0 1 9.5 10L11 8.5 9 3.5 5 4Z" stroke="#D4AF37" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="label">Telefonia &amp; Fibra</span>
+    </a>
+    <a class="tile" href="#negozio">
+      <span class="glyph">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="#D4AF37" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.2" stroke="#D4AF37" stroke-width="1.6"/></svg>
+      </span>
+      <span class="label">Negozio</span>
+    </a>
   </nav>
 </header>
 
-<section class="install-app-section">
-  <div class="section-head"><div><p class="eyebrow">Installazione</p><h3>Installa l'app</h3></div></div>
-  <div class="install-grid" id="install-grid">
-    <button class="install-btn" data-platform="android" type="button"><span class="install-icon">🤖</span><span><strong>Android</strong><small>Installa sul telefono</small></span></button>
-    <button class="install-btn" data-platform="iphone" type="button"><span class="install-icon"></span><span><strong>iPhone</strong><small>Aggiungi alla schermata Home</small></span></button>
-    <button class="install-btn" data-platform="windows" type="button"><span class="install-icon">⊞</span><span><strong>Windows</strong><small>Installa sul PC</small></span></button>
-    <button class="install-btn" data-platform="macos" type="button"><span class="install-icon"></span><span><strong>macOS</strong><small>Aggiungi al Dock</small></span></button>
+
+<!-- ===================== NOVITÀ ===================== -->
+<div class="home-novita">
+  <div class="txt">
+    <h4>✨ Novità</h4>
+    <p>Abbiamo aggiornato il catalogo e le comunicazioni. Scopri le novità disponibili.</p>
   </div>
-  <p class="install-hint" id="install-hint">Scegli il sistema che stai usando. Il dispositivo attuale viene evidenziato automaticamente.</p>
+  <a class="btn" href="#offerte">Vedi</a>
+</div>
+
+<!-- ===================== INSTALLA APP ===================== -->
+<section class="home-install" id="installa-app">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Accesso rapido</p>
+      <h3>Installa l'app</h3>
+    </div>
+  </div>
+
+  <div class="install-grid">
+    <button class="install-btn" data-platform="android" type="button">
+      <span class="install-icon">🤖</span>
+      <span><strong>Android</strong><small>Installa sul telefono</small></span>
+    </button>
+
+    <button class="install-btn" data-platform="iphone" type="button">
+      <span class="install-icon"></span>
+      <span><strong>iPhone</strong><small>Aggiungi alla schermata Home</small></span>
+    </button>
+
+    <button class="install-btn" data-platform="windows" type="button">
+      <span class="install-icon">⊞</span>
+      <span><strong>Windows</strong><small>Installa sul PC</small></span>
+    </button>
+
+    <button class="install-btn" data-platform="macos" type="button">
+      <span class="install-icon"></span>
+      <span><strong>macOS</strong><small>Aggiungi al Dock</small></span>
+    </button>
+  </div>
+
+  <p class="install-hint" id="install-hint">
+    Scegli il sistema che stai usando per vedere le istruzioni.
+  </p>
 </section>
 
-
-<main>
-<section id="home"></section>
-
+<!-- ===================== CATALOGO ===================== -->
 <section id="catalogo">
-  <a class="back" href="#home">← Home</a>
-  <div class="section-head"><p class="eyebrow">Catalogo</p><h3>Scegli una categoria</h3></div>
-  <div class="quicktiles">
-    <a class="tile" href="#smartphone"><span class="glyph">📱</span><span class="label">Smartphone</span></a>
-    <a class="tile" href="#accessori"><span class="glyph">🎧</span><span class="label">Accessori</span></a>
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Prezzi aggiornati</p>
+      <h3>Catalogo</h3>
+    </div>
   </div>
-</section>
 
-<section id="smartphone" class="page">
-  <a class="back" href="#catalogo">← Catalogo</a>
-  <div class="section-head"><p class="eyebrow">Prezzi aggiornati</p><h3>Smartphone</h3></div>
-  <div class="toolbar"><input id="search" type="search" placeholder="Cerca marca o modello"><select id="brand"><option value="">Tutte le marche</option></select></div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-cat="smartphone">Smartphone</button>
+    <button class="tab" data-cat="accessori">Accessori</button>
+    <button class="tab" data-cat="ricambi">Ricambi</button>
+  </div>
+
+  <div class="catalog-search-wrap">
+    <input id="catalog-search" type="search" placeholder="Cerca marca o modello..." autocomplete="off" aria-label="Cerca marca o modello">
+  </div>
+
   <div class="products" id="products"></div>
 </section>
 
-<section id="accessori" class="page">
-  <a class="back" href="#catalogo">← Catalogo</a>
-  <div class="section-head"><p class="eyebrow">Catalogo</p><h3>Accessori</h3></div>
-  <div class="products" id="accessories"></div>
-</section>
+<!-- ===================== OFFERTE / NOTIFICHE ===================== -->
+<section id="offerte">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Avvisi</p>
+      <h3>Notifiche</h3>
+    </div>
+  </div>
 
-<section id="offerte" class="page">
-  <a class="back" href="#home">← Home</a>
-  <div class="section-head"><p class="eyebrow">Promozioni</p><h3>Offerte</h3></div>
-  <div id="offers-list"></div>
-</section>
-
-<section id="telefonia" class="page">
-  <a class="back" href="#home">← Home</a>
-  <div class="section-head"><p class="eyebrow">Piani mobile e fibra</p><h3>Telefonia &amp; Fibra</h3></div>
-  <div class="quicktiles">
-    <a class="tile" href="#mobile"><span class="glyph">📞</span><span class="label">Mobile</span></a>
-    <a class="tile" href="#fibra"><span class="glyph">🌐</span><span class="label">Fibra</span></a>
+  <div class="notify-card">
+    <div class="txt">
+      <h4>Non perderti le novità</h4>
+      <p>Attiva le notifiche per ricevere un avviso quando ci sono nuove offerte o aggiornamenti.</p>
+    </div>
+    <button class="btn" id="notify-btn" type="button">Attiva</button>
   </div>
 </section>
 
-<section id="mobile" class="page">
-  <a class="back" href="#telefonia">← Telefonia &amp; Fibra</a>
-  <div class="section-head"><p class="eyebrow">Piani Mobile</p><h3>Mobile</h3></div>
-  <div id="mobile-list"></div>
+<!-- ===================== TELEFONIA & FIBRA ===================== -->
+<section id="telefonia">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Piani mobile e fibra</p>
+      <h3>Telefonia &amp; Fibra</h3>
+    </div>
+  </div>
+
+  <div class="tabs" id="carrier-tabs">
+    <button class="tab active" data-carrier="tim">TIM</button>
+    <button class="tab" data-carrier="wind">WindTre</button>
+    <button class="tab" data-carrier="sky">Sky</button>
+    <button class="tab" data-carrier="lyca">Lycamobile</button>
+    <button class="tab" data-carrier="very">VeryMobile</button>
+    <button class="tab" data-carrier="kena">Kena</button>
+  </div>
+
+  <div id="carrier-plans"></div>
 </section>
 
-<section id="fibra" class="page">
-  <a class="back" href="#telefonia">← Telefonia &amp; Fibra</a>
-  <div class="section-head"><p class="eyebrow">Piani Fibra</p><h3>Fibra</h3></div>
-  <div id="fibra-list"></div>
-</section>
+<!-- ===================== NEGOZIO ===================== -->
+<section id="negozio">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Dove siamo</p>
+      <h3>Il negozio</h3>
+    </div>
+  </div>
 
-<section id="negozio" class="page">
-  <a class="back" href="#home">← Home</a>
-  <div class="section-head"><p class="eyebrow">Dove siamo</p><h3>Il negozio</h3></div>
   <ul class="info-list">
-    <li><div><p class="lbl">Indirizzo</p><p class="val" id="shop-address">—</p></div></li>
-    <li><div><p class="lbl">Telefono</p><a class="val" id="shop-phone" href="#">—</a></div></li>
-    <li><div><p class="lbl">WhatsApp</p><a class="val" id="shop-whatsapp" href="#">—</a></div></li>
+    <li>
+      <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="#4FD8E8" stroke-width="1.6"/><circle cx="12" cy="9.5" r="2.2" stroke="#4FD8E8" stroke-width="1.6"/></svg></span>
+      <div>
+        <p class="lbl">Indirizzo</p>
+        <p class="val" id="shop-address">Viale Indipendenza 57/a, 63100 Ascoli Piceno</p>
+      </div>
+    </li>
+    <li>
+      <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.2 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1v3.7c0 .6-.4 1-1 1C10.5 21.3 2.7 13.5 2.7 3.7c0-.6.4-1 1-1h3.7c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.2 1.1L6.6 10.8Z" stroke="#4FD8E8" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
+      <div>
+        <p class="lbl">Telefono</p>
+        <a class="val" id="shop-phone" href="tel:+39073646354">0736 46354</a>
+      </div>
+    </li>
+    <li>
+      <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13Z" stroke="#4FD8E8" stroke-width="1.5"/><path d="M4 6.5 12 12l8-5.5" stroke="#4FD8E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div>
+        <p class="lbl">WhatsApp / Email</p>
+        <a class="val" id="shop-whatsapp" href="https://wa.me/39333123456" target="_blank" rel="noopener">333 123 456</a>
+      </div>
+    </li>
   </ul>
-  <table class="hours" id="shop-hours"></table>
-  <div class="cta-row"><a class="btn" id="shop-directions" href="#" target="_blank" rel="noopener">Indicazioni</a><a class="btn ghost" id="shop-call" href="#">Chiama</a></div>
+
+  <table class="hours" id="shop-hours">
+    <tr><td>Lunedì</td><td>15:30 – 19:30</td></tr>
+    <tr><td>Martedì – Sabato</td><td>9:00 – 13:00, 15:30 – 19:30</td></tr>
+    <tr><td>Domenica</td><td>Chiuso</td></tr>
+  </table>
+
+  <div class="map-wrap">
+    <iframe
+      id="shop-map"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=13.5800%2C42.8500%2C13.5940%2C42.8580&layer=mapnik&marker=42.8540%2C13.5870"
+      loading="lazy"
+      title="Mappa negozio Fvc Project"></iframe>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn" id="shop-directions" href="https://www.openstreetmap.org/directions?to=42.8540%2C13.5870" target="_blank" rel="noopener">Indicazioni</a>
+    <a class="btn ghost" id="shop-call" href="tel:+39073646354">Chiama</a>
+  </div>
 </section>
 
-</main>
+<footer>
+  <div class="bars"><span></span><span></span><span></span><span></span></div>
+  <p id="shop-footer">Fvc Project Srl · Viale Indipendenza 57/a, 63100 Ascoli Piceno<br>Contenuti di esempio — da sostituire con i tuoi</p>
+</footer>
 
-<footer><div class="bars"><span></span><span></span><span></span><span></span></div><p id="shop-footer">Fvc Project Srl</p></footer>
+<div id="lightbox">
+  <button id="lightbox-close" aria-label="Chiudi">×</button>
+  <img id="lightbox-img" alt="">
+</div>
 
 <div id="product-modal">
   <div class="product-modal-card">
@@ -605,107 +781,642 @@
   </div>
 </div>
 
+<div id="install-bar">
+  <p><strong id="install-bar-name">Aggiungi Fvc Project alla Home</strong>Accesso rapido, anche offline.</p>
+  <button class="btn" id="install-btn">Installa</button>
+  <button class="close" id="install-close" aria-label="Chiudi">×</button>
+</div>
+
+<div id="ios-install-bar">
+  <p><strong id="ios-install-bar-name">Aggiungi Fvc Project alla Home</strong>Tocca <span class="ios-share-icon" aria-hidden="true">⬆</span> Condividi, poi "Aggiungi a Home".</p>
+  <button class="close" id="ios-install-close" aria-label="Chiudi">×</button>
+</div>
+
 <script>
-function tick(){const d=new Date();document.getElementById('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
-tick();setInterval(tick,15000);
+  // ---- orologio nella status bar decorativa ----
+  function tick(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent = hh + ':' + mm;
+  }
+  tick();
+  setInterval(tick, 15000);
 
-let cfg={products:[],accessories:[],offers:[],plans:[]};
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  // ---- contenuti del negozio (nome, indirizzo, contatti, orari, catalogo):
+  // caricati dal server, modificabili dal pannello admin.html.
+  // Se il server non risponde, restano i valori di esempio gia' scritti
+  // nell'HTML, cosi' la pagina non appare mai vuota. ----
+  let CATALOG = {
+    smartphone: [
+      { name:'iPhone 15', spec:'128GB · Nero', price:'799€', stock:4 },
+      { name:'Galaxy S24', spec:'256GB · Grigio', price:'729€', stock:3 },
+      { name:'Redmi Note 13', spec:'128GB · Blu', price:'229€', stock:4 },
+      { name:'Pixel 8a', spec:'128GB · Verde', price:'459€', stock:2 },
+    ],
+    accessori: [
+      { name:'Cover silicone', spec:'Universale', price:'14,90€', stock:4 },
+      { name:'Vetro temperato', spec:'9H · Anti-impronta', price:'9,90€', stock:4 },
+      { name:'Caricatore 20W', spec:'USB-C · Ricarica rapida', price:'19,90€', stock:3 },
+      { name:'Auricolari BT', spec:'Bluetooth 5.3', price:'34,90€', stock:2 },
+    ],
+    ricambi: [
+      { name:'Batteria iPhone', spec:'Varie generazioni', price:'da 39€', stock:3 },
+      { name:'Display Samsung', spec:'Varie generazioni', price:'da 79€', stock:2 },
+      { name:'Vetro posteriore', spec:'Varie generazioni', price:'da 29€', stock:3 },
+      { name:'Connettore ricarica', spec:'Universale', price:'da 19€', stock:4 },
+    ],
+  };
 
-function showPage(){
-  const valid=['home','catalogo','smartphone','accessori','offerte','telefonia','mobile','fibra','negozio'];
-  const p=valid.includes((location.hash||'#home').slice(1))?(location.hash||'#home').slice(1):'home';
-  document.querySelectorAll('main section.page').forEach(s=>s.style.display=s.id===p?'block':'none');
-  document.querySelectorAll('main section:not(.page):not(#home):not(.qr-link)').forEach(s=>{if(s.id)s.style.display=s.id===p?'block':'none'});
-  if(p==='home'){document.getElementById('catalogo').style.display='none';document.getElementById('offerte').style.display='none';document.getElementById('telefonia').style.display='none';document.getElementById('negozio').style.display='none'}
-  if(p==='catalogo')renderCategory();
-  if(p==='smartphone')renderProducts();
-  if(p==='accessori')renderAccessories();
-  if(p==='offerte')renderOffers();
-  if(p==='mobile')renderPlans('mobile');
-  if(p==='fibra')renderPlans('fibra');
-  if(p==='negozio')renderShop();
-}
-function row(label,value){return value?`<div class="pm-rate-option"><span class="months">${esc(label)}</span><span class="amount">${esc(value)}</span></div>`:''}
+  function stockDots(n){
+    let out = '';
+    for (let i=1;i<=4;i++) out += `<span class="${i<=n?'on':''}"></span>`;
+    return out;
+  }
 
-function openProduct(item){
-  let h='';
-  if(item.image)h+=`<img class="pm-thumb" src="${esc(item.image)}" alt="${esc(item.name)}">`;
-  h+=`<p class="pm-name">${esc(item.name)}</p><p class="pm-spec">${esc(item.brand||'')} ${esc(item.spec||'')}</p>`;
-  h+=`<div class="pm-price-row"><span class="pm-price-label">Prezzo totale</span><span class="pm-price-value">${esc(item.price||'')}</span></div>`;
-  if(item.installments?.length){h+='<p class="pm-rate-title">Acquista a rate</p>'+item.installments.map(r=>row(r.months||'Rata',r.amount||'')).join('')}
-  $('product-modal-body').innerHTML=h;$('product-modal').classList.add('show');
-}
-function openGeneric(type,item){
-  let h=item.image?`<img class="pm-thumb" src="${esc(item.image)}" alt="">`:'';
-  h+=`<p class="pm-name">${esc(item.name||item.title||'Dettaglio')}</p><p class="pm-spec">${esc(item.details||item.description||item.desc||'')}</p>`;
-  h+=row('Prezzo',item.price||item.pct||'');
-  if(item.file)h+=`<p><a class="btn" href="${esc(item.file)}" target="_blank" rel="noopener">Apri documento</a></p>`;
-  $('product-modal-body').innerHTML=h;$('product-modal').classList.add('show');
-}
-function closeProductModal(){$('product-modal').classList.remove('show')}
-$('product-modal-close').onclick=closeProductModal;
-$('product-modal').onclick=e=>{if(e.target.id==='product-modal')closeProductModal()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProductModal()});
+  // ---- lightbox: clic su una foto/PDF per vederlo a schermo intero ----
+  function openLightbox(src){
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('show');
+  }
+  function closeLightbox(){
+    document.getElementById('lightbox').classList.remove('show');
+    document.getElementById('lightbox-img').src = '';
+  }
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox').addEventListener('click', (e) => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+  // Delega: qualunque immagine con classe "zoomable", ovunque sia (catalogo,
+  // gestori, rate), apre il lightbox al tocco/click.
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest('img.zoomable');
+    if (img) openLightbox(img.currentSrc || img.src);
+  });
 
-function renderCategory(){}
-function renderBrands(){
-  const brands=[...new Set((cfg.products||[]).map(p=>p.brand).filter(Boolean))].sort();
-  $('brand').innerHTML='<option value="">Tutte le marche</option>'+brands.map(b=>`<option value="${esc(b)}">${esc(b)}</option>`).join('');
-}
-function renderProducts(){
-  const q=($('search').value||'').toLowerCase(),b=$('brand').value;
-  const a=(cfg.products||[]).filter(p=>`${p.name} ${p.brand}`.toLowerCase().includes(q)&&(!b||p.brand===b));
-  $('products').innerHTML=a.map(p=>`<div class="card product-card" data-index="${cfg.products.indexOf(p)}"><div class="thumb">${p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:contain;border-radius:10px">`:'📱'}</div><h4>${esc(p.name)}</h4><p class="spec">${esc(p.spec||'')}</p>${p.installments?.length?`<p class="installment-preview"><strong>A rate</strong> · ${esc(p.installments[0].months||'')} da ${esc(p.installments[0].amount||'')}</p>`:''}<div class="row"><span class="price">${esc(p.price||'')}</span></div></div>`).join('')||'<p class="muted">Nessun prodotto trovato.</p>';
-}
-function renderAccessories(){
-  const a=cfg.accessories?.length?cfg.accessories:(cfg.products||[]).filter(p=>/accessor/i.test(`${p.category||''} ${p.type||''} ${p.name||''}`));
-  $('accessories').innerHTML=a.map(p=>`<div class="card product-card" data-index="${cfg.products.indexOf(p)}"><div class="thumb">${p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:contain;border-radius:10px">`:'🎧'}</div><h4>${esc(p.name)}</h4><p class="spec">${esc(p.spec||'')}</p><div class="row"><span class="price">${esc(p.price||'')}</span></div></div>`).join('')||'<p class="muted">Nessun accessorio disponibile.</p>';
-}
-function renderOffers(){
-  $('offers-list').innerHTML=(cfg.offers||[]).map((o,i)=>`<div class="offer" data-index="${i}"><div class="pct">${esc(o.pct||'')}</div><div class="body"><h4>${esc(o.title)}</h4><p>${esc(o.description||o.desc||'')}</p></div></div>`).join('')||'<p class="muted">Nessuna offerta disponibile.</p>';
-}
-function renderPlans(type){
-  const target=type==='fibra'?'fibra-list':'mobile-list';
-  const a=(cfg.plans||[]).filter(p=>p.type===type);
-  $(target).innerHTML=a.map((p,i)=>`<div class="plan" data-index="${cfg.plans.indexOf(p)}"><span class="badge ${type}">${type}</span><div class="row"><div><h4>${esc(p.name)}</h4><p>${esc(p.details||'')}</p></div><span class="price">${esc(p.price||'')}</span></div></div>`).join('')||'<p class="muted">Nessuna offerta disponibile.</p>';
-}
-document.addEventListener('click',e=>{
-  const pc=e.target.closest('.product-card');if(pc){openProduct(cfg.products[+pc.dataset.index]);return}
-  const off=e.target.closest('.offer');if(off){openGeneric('offer',cfg.offers[+off.dataset.index]);return}
-  const plan=e.target.closest('.plan');if(plan){openGeneric('plan',cfg.plans[+plan.dataset.index]);return}
-});
-$('search').oninput=renderProducts;$('brand').onchange=renderProducts;
+  const OPEN_BRANDS = new Set();
 
-function renderShop(){
-  $('shop-address').textContent=cfg.address||'';
-  $('shop-phone').textContent=cfg.phone||'';
-  $('shop-phone').href='tel:'+(cfg.phoneE164||cfg.phone||'');
-  $('shop-call').href='tel:'+(cfg.phoneE164||cfg.phone||'');
-  $('shop-whatsapp').textContent=cfg.whatsapp||'';
-  $('shop-whatsapp').href=cfg.whatsappLink||'#';
-  $('shop-footer').textContent=[cfg.shopName,cfg.address].filter(Boolean).join(' · ');
-  if(Array.isArray(cfg.hours))$('shop-hours').innerHTML=cfg.hours.map(h=>`<tr><td>${esc(h.label)}</td><td>${esc(h.value)}</td></tr>`).join('');
-  if(cfg.address){const q=encodeURIComponent(cfg.address);$('shop-directions').href=`https://www.google.com/maps/dir/?api=1&destination=${q}`}
-}
-async function init(){
-  try{const r=await fetch('/api/config');if(!r.ok)throw Error();cfg=await r.json();$('shop-name').textContent=cfg.shopName||'Fvc Project Srl';renderBrands();renderShop()}catch(e){console.error(e)}
-  showPage();
-}
-window.addEventListener('hashchange',showPage);init();
+  function normalizeCatalogSearch(value){
+    return String(value || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\s_\-./]+/g, '');
+  }
 
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(console.error));
-let deferredInstallPrompt=null;let selectedInstallPlatform=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;});
-function detectPlatform(){const ua=navigator.userAgent||'';const p=navigator.platform||'';if(/iPhone|iPad|iPod/i.test(ua)||(p==='MacIntel'&&navigator.maxTouchPoints>1))return'iphone';if(/Android/i.test(ua))return'android';if(/Windows/i.test(ua))return'windows';if(/Macintosh|Mac OS X/i.test(ua))return'macos';return'';}
-function markCurrentInstallPlatform(){const c=detectPlatform();document.querySelectorAll('.install-btn').forEach(b=>b.classList.toggle('current',b.dataset.platform===c));const labels={android:'Android',iphone:'iPhone',windows:'Windows',macos:'macOS'};if(c)$('install-hint').textContent=`Stai usando ${labels[c]}. Puoi comunque scegliere un altro sistema.`;}
-function installInstructions(p){const d={android:{title:'Installa su Android',intro:'Se il browser permette l’installazione, puoi aggiungere FVC Project direttamente alla schermata Home.',steps:['Tocca “Installa app” quando compare la richiesta del browser.','Se non compare, apri il menu ⋮ e scegli “Installa app” o “Aggiungi a schermata Home”.','Conferma l’installazione.']},iphone:{title:'Installa su iPhone',intro:'Su iPhone l’installazione si fa da Safari, senza scaricare un’app dall’App Store.',steps:['Apri FVC Project con Safari.','Tocca il pulsante Condividi.','Scegli “Aggiungi alla schermata Home”.','Conferma con “Aggiungi”.']},windows:{title:'Installa su Windows',intro:'Su Chrome o Edge puoi installare FVC Project come app sul PC.',steps:['Apri FVC Project con Chrome o Edge.','Usa il pulsante di installazione del browser oppure il menu e scegli “Installa app”.','Conferma l’installazione.']},macos:{title:'Installa su macOS',intro:'Su Mac l’installazione dipende dal browser utilizzato.',steps:['Con Chrome o Edge, usa il pulsante di installazione del browser e conferma.','Con Safari, usa File > Aggiungi al Dock.','Dopo l’aggiunta puoi aprire FVC Project dal Dock come un’app.']}};return d[p];}
-function openInstall(p){selectedInstallPlatform=p;const d=installInstructions(p);$('installTitle').textContent=d.title;$('installIntro').textContent=d.intro;$('installSteps').innerHTML=d.steps.map(s=>`<li>${esc(s)}</li>`).join('');$('installAction').textContent=(deferredInstallPrompt&&['android','windows','macos'].includes(p))?'Installa app':'Ho capito';$('installModal').classList.add('show');$('installModal').setAttribute('aria-hidden','false');}
-function closeInstall(){$('installModal').classList.remove('show');$('installModal').setAttribute('aria-hidden','true');}
-document.querySelectorAll('.install-btn').forEach(b=>b.addEventListener('click',()=>openInstall(b.dataset.platform)));$('installClose').onclick=closeInstall;$('installDismiss').onclick=closeInstall;$('installModal').addEventListener('click',e=>{if(e.target===$('installModal'))closeInstall()});
-$('installAction').onclick=async()=>{if(deferredInstallPrompt&&['android','windows','macos'].includes(selectedInstallPlatform)){const q=deferredInstallPrompt;deferredInstallPrompt=null;await q.prompt();try{await q.userChoice}catch(_){}closeInstall();}else closeInstall();};markCurrentInstallPlatform();
+  function getCatalogBrand(product){
+    const value = normalizeCatalogSearch((product.name || '') + ' ' + (product.spec || ''));
+    if (value.includes('samsung') || value.includes('galaxy')) return 'Samsung';
+    if (value.includes('apple') || value.includes('iphone')) return 'Apple';
+    if (value.includes('xiaomi') || value.includes('redmi')) return 'Xiaomi';
+    if (value.includes('oppo')) return 'Oppo';
+    if (value.includes('realme')) return 'Realme';
+    if (value.includes('honor')) return 'Honor';
+    return 'Altri';
+  }
+
+  function escapeCatalogText(value){
+    return String(value ?? '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+
+  function renderCatalogCard(p, i, cat){
+    // Questa è la card originale: non ne cambiamo grafica o contenuto.
+    return `
+      <div class="card${cat === 'smartphone' ? ' product-card' : ''}" ${cat === 'smartphone' ? `data-cat="${cat}" data-index="${i}"` : ''}>
+        <div class="thumb">
+          ${p.image
+            ? `<img class="zoomable" src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`
+            : `<svg width="30" height="30" viewBox="0 0 24 24" fill="none"><rect x="6" y="2" width="12" height="20" rx="2.5" stroke="#4FD8E8" stroke-width="1.4" opacity="0.8"/><line x1="10" y1="18.5" x2="14" y2="18.5" stroke="#4FD8E8" stroke-width="1.4" stroke-linecap="round" opacity="0.8"/></svg>`}
+        </div>
+        <h4>${p.name}</h4>
+        <p class="spec">${p.spec}</p>
+        ${cat === 'smartphone' && Array.isArray(p.installments) && p.installments.length
+          ? `<p class="installment-preview"><strong>A rate</strong> · ${p.installments[0].months || ''} da ${p.installments[0].amount || ''}</p>`
+          : ''}
+        <div class="row">
+          <span class="price">${p.price}</span>
+          <span class="stock">${stockDots(p.stock)}</span>
+        </div>
+      </div>`;
+  }
+
+  function renderCatalog(cat){
+    const wrap = document.getElementById('products');
+    const search = document.getElementById('catalog-search');
+
+    // Accessori e Ricambi restano esattamente come nell'originale.
+    if (cat !== 'smartphone'){
+      wrap.innerHTML = (CATALOG[cat] || []).map((p, i) => renderCatalogCard(p, i, cat)).join('');
+      return;
+    }
+
+    const query = normalizeCatalogSearch(search ? search.value : '');
+    const originalItems = CATALOG.smartphone || [];
+
+    const filtered = originalItems
+      .map((p, i) => ({ p, i }))
+      .filter(({p}) => {
+        if (!query) return true;
+        return normalizeCatalogSearch(p.name).includes(query) ||
+               normalizeCatalogSearch(p.spec).includes(query) ||
+               normalizeCatalogSearch(getCatalogBrand(p)).includes(query);
+      });
+
+    if (!filtered.length){
+      wrap.innerHTML = '<div class="catalog-no-results">Nessuno smartphone trovato.</div>';
+      return;
+    }
+
+    const groups = {};
+    filtered.forEach(({p,i}) => {
+      const brand = getCatalogBrand(p);
+      if (!groups[brand]) groups[brand] = [];
+      groups[brand].push({p,i});
+    });
+
+    const brands = Object.keys(groups).sort((a,b) => a.localeCompare(b,'it',{sensitivity:'base'}));
+    const searching = Boolean(query);
+
+    wrap.innerHTML = brands.map(brand => {
+      const products = groups[brand].slice().sort((a,b) =>
+        String(a.p.name || '').localeCompare(String(b.p.name || ''),'it',{sensitivity:'base',numeric:true})
+      );
+      const key = normalizeCatalogSearch(brand);
+      const open = searching || OPEN_BRANDS.has(key);
+
+      return `
+        <div class="brand-section ${open ? '' : 'collapsed'}">
+          <button type="button" class="brand-toggle" onclick="toggleBrandSection('${key.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">
+            <span class="brand-name">${escapeCatalogText(brand)}</span>
+            <span class="brand-count">${products.length}</span>
+            <span class="brand-arrow">▼</span>
+          </button>
+          <div class="brand-products">
+            ${products.map(({p,i}) => renderCatalogCard(p,i,cat)).join('')}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  window.toggleBrandSection = function(key){
+    if (OPEN_BRANDS.has(key)) OPEN_BRANDS.delete(key);
+    else OPEN_BRANDS.add(key);
+    renderCatalog('smartphone');
+  };
+
+  renderCatalog('smartphone');
+
+  document.getElementById('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab');
+    if (!btn) return;
+    document.querySelectorAll('#tabs .tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderCatalog(btn.dataset.cat);
+  });
+
+  document.getElementById('catalog-search').addEventListener('input', () => {
+    const active = document.querySelector('#tabs .tab.active');
+    if (active && active.dataset.cat === 'smartphone') renderCatalog('smartphone');
+  });
+
+  // ---- popup prodotto: prezzo totale + rateizzazione, al tap su uno smartphone ----
+  function openProductModal(p){
+    const hasRates = Array.isArray(p.installments) && p.installments.length > 0;
+    const body = document.getElementById('product-modal-body');
+    body.innerHTML = `
+      ${p.image ? `<img class="pm-thumb" src="${p.image}" alt="${p.name}">` : ''}
+      <p class="pm-name">${p.name}</p>
+      <p class="pm-spec">${p.spec || ''}</p>
+      <div class="pm-price-row">
+        <span class="pm-price-label">Prezzo totale</span>
+        <span class="pm-price-value">${p.price}</span>
+      </div>
+      <p class="pm-rate-title">Acquista a rate</p>
+      ${hasRates
+        ? p.installments.map(r => `
+            <div class="pm-rate-option">
+              <div>
+                <span class="months">${r.months || ''}</span>
+                ${r.discount ? `<br><span style="font-size:11px;color:var(--gold-soft);">Risparmi ${r.discount}</span>` : ''}
+              </div>
+              <span class="amount">${r.amount || ''}</span>
+            </div>
+          `).join('')
+        : `<p class="pm-no-rate">Rateizzazione non disponibile al momento per questo prodotto.<br>Chiedi in negozio le opzioni di pagamento.</p>`}
+    `;
+    document.getElementById('product-modal').classList.add('show');
+  }
+  function closeProductModal(){
+    document.getElementById('product-modal').classList.remove('show');
+  }
+  document.getElementById('product-modal-close').addEventListener('click', closeProductModal);
+  document.getElementById('product-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'product-modal') closeProductModal();
+  });
+  document.getElementById('products').addEventListener('click', (e) => {
+    if (e.target.closest('img.zoomable')) return; // il tap sulla foto apre lo zoom, non il popup
+    const card = e.target.closest('.product-card');
+    if (!card) return;
+    const p = CATALOG[card.dataset.cat][Number(card.dataset.index)];
+    if (p) openProductModal(p);
+  });
+
+  // ---- telefonia & fibra: piani per gestore ----
+  let CARRIERS = {
+    tim: [{ name: 'Tim Power Iron', type: 'mobile', price: '9,99€/mese', details: '150GB, minuti e SMS illimitati' }],
+    wind: [{ name: 'WindTre Go Unlimited', type: 'mobile', price: '11,99€/mese', details: 'Giga illimitati, minuti illimitati' }],
+    sky: [{ name: 'Sky Wifi', type: 'fibra', price: '29,95€/mese', details: 'Fibra fino a 1 Giga, modem incluso' }],
+    lyca: [{ name: 'Lycamobile Italia 100', type: 'mobile', price: '7,99€/mese', details: '100GB, minuti illimitati' }],
+    very: [{ name: 'VeryMobile 150GB', type: 'mobile', price: '5,99€/mese', details: '150GB, minuti illimitati' }],
+    kena: [{ name: 'Kena 150GB', type: 'mobile', price: '7,99€/mese', details: '150GB, minuti illimitati' }],
+  };
+
+  function renderCarrierPlans(carrier){
+    const wrap = document.getElementById('carrier-plans');
+    const plans = CARRIERS[carrier] || [];
+    if (plans.length === 0){
+      wrap.innerHTML = '<p style="color:var(--text-dim);font-size:13px;">Nessun piano disponibile al momento per questo gestore.</p>';
+      return;
+    }
+    wrap.innerHTML = plans.map(p => {
+      if (p.isPhoto) {
+        return `
+          <div class="plan plan-photo">
+            <img class="zoomable" src="${p.image}" alt="Offerta ${carrier}">
+          </div>
+        `;
+      }
+      return `
+      <div class="plan">
+        <span class="badge ${p.type === 'fibra' ? 'fibra' : 'mobile'}">${p.type === 'fibra' ? 'Fibra' : 'Mobile'}</span>
+        <div class="row">
+          ${p.image ? `<img class="zoomable" src="${p.image}" alt="${p.name}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0;">` : ''}
+          <div style="flex:1;">
+            <h4>${p.name}</h4>
+            <p>${p.details || ''}</p>
+          </div>
+          <span class="price">${p.price}</span>
+        </div>
+      </div>
+    `;
+    }).join('');
+  }
+  renderCarrierPlans('tim');
+
+  document.getElementById('carrier-tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab');
+    if (!btn) return;
+    document.querySelectorAll('#carrier-tabs .tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderCarrierPlans(btn.dataset.carrier);
+  });
+
+  function applyShopConfig(cfg){
+    if (!cfg) return;
+    document.title = `${cfg.shopName} — Telefonia`;
+    const setText = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+    setText('shop-name', cfg.shopName);
+    setText('install-bar-name', `Aggiungi ${cfg.shopName} alla Home`);
+    setText('ios-install-bar-name', `Aggiungi ${cfg.shopName} alla Home`);
+    setText('shop-address', cfg.address);
+
+    const phoneEl = document.getElementById('shop-phone');
+    if (phoneEl && cfg.phone) { phoneEl.textContent = cfg.phone; phoneEl.href = `tel:${cfg.phoneE164 || cfg.phone}`; }
+    const callEl = document.getElementById('shop-call');
+    if (callEl && cfg.phoneE164) callEl.href = `tel:${cfg.phoneE164}`;
+
+    const waEl = document.getElementById('shop-whatsapp');
+    if (waEl && cfg.whatsapp) { waEl.textContent = cfg.whatsapp; waEl.href = cfg.whatsappLink || waEl.href; }
+
+    if (Array.isArray(cfg.hours) && cfg.hours.length) {
+      document.getElementById('shop-hours').innerHTML = cfg.hours.map(h => `<tr><td>${h.label}</td><td>${h.value}</td></tr>`).join('');
+    }
+
+    if (cfg.address) {
+      const q = encodeURIComponent(cfg.address);
+      document.getElementById('shop-map').src = `https://www.google.com/maps?q=${q}&output=embed`;
+      document.getElementById('shop-directions').href = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
+    }
+
+    const footerEl = document.getElementById('shop-footer');
+    if (footerEl) footerEl.innerHTML = `${cfg.shopName} · ${cfg.address}`;
+
+    if (cfg.products) {
+      CATALOG = cfg.products;
+      const activeTab = document.querySelector('#tabs .tab.active');
+      renderCatalog(activeTab ? activeTab.dataset.cat : 'smartphone');
+    }
+
+    if (cfg.carriers) {
+      CARRIERS = cfg.carriers;
+      const activeCarrierTab = document.querySelector('#carrier-tabs .tab.active');
+      renderCarrierPlans(activeCarrierTab ? activeCarrierTab.dataset.carrier : 'tim');
+    }
+  }
+
+  fetch('/api/config').then(r => r.ok ? r.json() : Promise.reject()).then(applyShopConfig).catch(() => {});
+
+
+  // ---- offerte: caricate dal server (server/data/offers.json).
+  // Se il server non risponde (es. app aperta come semplice file statico),
+  // mostriamo comunque un set di esempio cosi' la sezione non resta vuota. ----
+  const FALLBACK_OFFERS = [
+    { pct:'-15%', title:'Cover e vetri protettivi', desc:'Su tutta la selezione accessori, fino a fine mese.', heat:3 },
+    { pct:'−80€', title:'Permuta il tuo usato', desc:'Valutazione gratuita, sconto immediato sul nuovo acquisto.', heat:2 },
+    { pct:'2x1', title:'Pellicole in vetro temperato', desc:'Acquistane una, la seconda è in regalo.', heat:1 },
+  ];
+  function heatDots(n){
+    let out = '';
+    for (let i=1;i<=4;i++) out += `<span class="${i<=n?'on':''}"></span>`;
+    return out;
+  }
+  function renderOffers(offers){
+    document.getElementById('offers-list').innerHTML = offers.map(o => `
+      <div class="offer">
+        <div class="pct">${o.pct}</div>
+        <div class="body">
+          <h4>${o.title}</h4>
+          <p>${o.desc}</p>
+          <div class="heat">${heatDots(o.heat)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  fetch('/api/offers')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(renderOffers)
+    .catch(() => renderOffers(FALLBACK_OFFERS));
+
+  // ---- notifiche push in tempo reale ----
+  // Il permesso lo chiede il browser, ma l'iscrizione vera e propria viene
+  // registrata sul server: e' li' che sapremo a chi mandare le notifiche
+  // quando aggiungerai una nuova offerta.
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = atob(base64);
+    return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+  }
+
+  const notifyBtn = document.getElementById('notify-btn');
+
+  function setNotifyState(state){
+    // state: 'idle' | 'active' | 'blocked' | 'unsupported' | 'error'
+    if (state === 'unsupported'){ notifyBtn.textContent='Non supportato'; notifyBtn.disabled=true; }
+    else if (state === 'active'){ notifyBtn.textContent='Attive ✓'; notifyBtn.disabled=true; }
+    else if (state === 'blocked'){ notifyBtn.textContent='Bloccate'; notifyBtn.disabled=true; }
+    else if (state === 'error'){ notifyBtn.textContent='Riprova'; notifyBtn.disabled=false; }
+    else { notifyBtn.textContent='Attiva'; notifyBtn.disabled=false; }
+  }
+
+  async function initNotifyButton(){
+    if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+      setNotifyState('unsupported'); return;
+    }
+    if (Notification.permission === 'denied'){ setNotifyState('blocked'); return; }
+    if (Notification.permission === 'granted'){
+      const reg = await navigator.serviceWorker.ready;
+      let existing = await reg.pushManager.getSubscription();
+      if (existing) {
+        // Controlliamo che la chiave di sicurezza con cui e' stata creata
+        // l'iscrizione corrisponda ancora a quella attuale del server. Se il
+        // server ha generato nuove chiavi nel frattempo, l'iscrizione vecchia
+        // non funzionerebbe piu': la rifacciamo da zero, in automatico.
+        try {
+          const { publicKey } = await fetch('/api/vapid-public-key').then(r => r.json());
+          const currentKey = urlBase64ToUint8Array(publicKey);
+          const existingKey = existing.options && existing.options.applicationServerKey
+            ? new Uint8Array(existing.options.applicationServerKey) : null;
+          const sameKey = existingKey && existingKey.length === currentKey.length &&
+            existingKey.every((v, i) => v === currentKey[i]);
+          if (!sameKey) {
+            await existing.unsubscribe();
+            existing = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: currentKey });
+          }
+        } catch (e) { /* se il controllo fallisce, si prova comunque a registrare quella esistente */ }
+
+        // Ri-registriamo comunque sul server ad ogni apertura, in silenzio,
+        // cosi' un eventuale disallineamento lato server si corregge da solo.
+        try {
+          await fetch('/api/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(existing)
+          });
+        } catch (e) { /* nessun problema, si ritentera' alla prossima apertura */ }
+        setNotifyState('active');
+        return;
+      }
+    }
+    setNotifyState('idle');
+  }
+
+  notifyBtn.addEventListener('click', async () => {
+    if (!('Notification' in window)) return;
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted'){ setNotifyState(perm === 'denied' ? 'blocked' : 'idle'); return; }
+
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const { publicKey } = await fetch('/api/vapid-public-key').then(r => r.json());
+      const subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey)
+      });
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(subscription)
+      });
+      setNotifyState('active');
+      reg.showNotification('Fvc Project', {
+        body: 'Notifiche attivate. Ti avviseremo delle prossime offerte.',
+        icon: 'icons/icon-192.png'
+      });
+    } catch (err) {
+      console.error('Iscrizione alle notifiche non riuscita:', err);
+      setNotifyState('error');
+    }
+  });
+
+  initNotifyButton();
+
+  // ---- service worker ----
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    });
+  }
+
+  // ---- prompt di installazione personalizzato ----
+  let deferredPrompt;
+  const installBar = document.getElementById('install-bar');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBar.classList.add('show');
+  });
+  document.getElementById('install-btn').addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBar.classList.remove('show');
+  });
+  document.getElementById('install-close').addEventListener('click', () => {
+    installBar.classList.remove('show');
+  });
+  window.addEventListener('appinstalled', () => {
+    installBar.classList.remove('show');
+  });
+
+  // ---- iPhone/iPad: niente prompt automatico, mostriamo istruzioni manuali ----
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const iosBar = document.getElementById('ios-install-bar');
+  if (isIOS && !isStandalone) {
+    iosBar.classList.add('show');
+  }
+  document.getElementById('ios-install-close').addEventListener('click', () => {
+    iosBar.classList.remove('show');
+  });
 </script>
 
-<div id="installModal" class="install-modal" aria-hidden="true"><div class="install-modal-card"><button class="install-close" id="installClose" type="button" aria-label="Chiudi">×</button><h3 id="installTitle">Installa l'app</h3><p id="installIntro"></p><ol class="install-steps" id="installSteps"></ol><div class="install-modal-actions"><button class="btn" id="installAction" type="button">Installa app</button><button class="btn ghost" id="installDismiss" type="button">Chiudi</button></div></div></div>
-</body></html>
+<div id="installModal" class="install-modal" aria-hidden="true">
+  <div class="install-modal-card">
+    <button class="install-close" id="installClose" type="button" aria-label="Chiudi">×</button>
+    <h3 id="installTitle">Installa l'app</h3>
+    <p id="installIntro"></p>
+    <ol class="install-steps" id="installSteps"></ol>
+    <div class="install-modal-actions">
+      <button class="btn" id="installAction" type="button">Installa app</button>
+      <button class="btn ghost" id="installDismiss" type="button">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // ---- Popup installazione: tutti i comandi di chiusura sono attivi ----
+  let selectedInstallPlatform = null;
+  let deferredInstallPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
+  function detectInstallPlatform() {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+    if (/iPhone|iPad|iPod/i.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iphone';
+    if (/Android/i.test(ua)) return 'android';
+    if (/Windows/i.test(ua)) return 'windows';
+    if (/Macintosh|Mac OS X/i.test(ua)) return 'macos';
+    return '';
+  }
+
+  function installData(platform) {
+    return {
+      android: {
+        title: 'Installa su Android',
+        intro: 'Puoi aggiungere Fvc Project direttamente alla schermata Home del telefono.',
+        steps: ['Tocca “Installa app” quando compare la richiesta del browser.',
+                'Se non compare, apri il menu ⋮ e scegli “Installa app” o “Aggiungi a schermata Home”.',
+                'Conferma l’installazione.']
+      },
+      iphone: {
+        title: 'Installa su iPhone',
+        intro: 'Su iPhone usa Safari per aggiungere Fvc Project alla schermata Home.',
+        steps: ['Apri Fvc Project con Safari.',
+                'Tocca il pulsante Condividi.',
+                'Scegli “Aggiungi alla schermata Home”.',
+                'Conferma con “Aggiungi”.']
+      },
+      windows: {
+        title: 'Installa su Windows',
+        intro: 'Con Chrome o Edge puoi installare Fvc Project come app sul PC.',
+        steps: ['Apri Fvc Project con Chrome o Edge.',
+                'Usa il pulsante di installazione del browser oppure il menu e scegli “Installa app”.',
+                'Conferma l’installazione.']
+      },
+      macos: {
+        title: 'Installa su macOS',
+        intro: 'Su Mac l’installazione dipende dal browser utilizzato.',
+        steps: ['Con Chrome o Edge usa il pulsante di installazione del browser e conferma.',
+                'Con Safari usa File > Aggiungi al Dock.',
+                'Dopo l’aggiunta puoi aprire Fvc Project dal Dock come un’app.']
+      }
+    }[platform];
+  }
+
+  function escapeInstallText(value) {
+    return String(value).replace(/[&<>'"]/g, c => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
+    }[c]));
+  }
+
+  function openInstallModal(platform) {
+    const data = installData(platform);
+    if (!data) return;
+    selectedInstallPlatform = platform;
+    document.getElementById('installTitle').textContent = data.title;
+    document.getElementById('installIntro').textContent = data.intro;
+    document.getElementById('installSteps').innerHTML =
+      data.steps.map(step => `<li>${escapeInstallText(step)}</li>`).join('');
+    document.getElementById('installAction').textContent =
+      deferredInstallPrompt && ['android','windows','macos'].includes(platform)
+        ? 'Installa app' : 'Ho capito';
+    document.getElementById('installModal').classList.add('show');
+    document.getElementById('installModal').setAttribute('aria-hidden', 'false');
+  }
+
+  function closeInstallModal() {
+    document.getElementById('installModal').classList.remove('show');
+    document.getElementById('installModal').setAttribute('aria-hidden', 'true');
+  }
+
+  document.querySelectorAll('.install-btn').forEach((button) => {
+    button.addEventListener('click', () => openInstallModal(button.dataset.platform));
+  });
+
+  // X in alto a destra
+  document.getElementById('installClose').addEventListener('click', closeInstallModal);
+  // Pulsante Chiudi
+  document.getElementById('installDismiss').addEventListener('click', closeInstallModal);
+  // Click sullo sfondo
+  document.getElementById('installModal').addEventListener('click', (event) => {
+    if (event.target === document.getElementById('installModal')) closeInstallModal();
+  });
+  // Tasto ESC
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeInstallModal();
+  });
+
+  document.getElementById('installAction').addEventListener('click', async () => {
+    if (deferredInstallPrompt && ['android','windows','macos'].includes(selectedInstallPlatform)) {
+      const promptEvent = deferredInstallPrompt;
+      deferredInstallPrompt = null;
+      await promptEvent.prompt();
+      try { await promptEvent.userChoice; } catch (_) {}
+      closeInstallModal();
+    } else {
+      closeInstallModal();
+    }
+  });
+
+  const currentInstallPlatform = detectInstallPlatform();
+  document.querySelectorAll('.install-btn').forEach((button) => {
+    button.classList.toggle('current', button.dataset.platform === currentInstallPlatform);
+  });
+  if (currentInstallPlatform) {
+    const names = {android:'Android', iphone:'iPhone', windows:'Windows', macos:'macOS'};
+    document.getElementById('install-hint').textContent =
+      `Stai usando ${names[currentInstallPlatform]}. Puoi comunque scegliere un altro sistema.`;
+  }
+</script>
+
+</body>
+</html>
