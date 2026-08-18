@@ -39,7 +39,7 @@ button{border:0;border-radius:9px;background:var(--g);color:#141821;padding:10px
 <div class="actions" style="margin-top:10px"><button id="savep">Salva</button><button class="secondary" id="cancelp">Annulla</button></div></div>
 
 <div class="card"><h2>Excel — prezzo + rate</h2>
-<p class="hint">Legge FN07S/FN07U a 30 rate, esclude pack e _sv, associa il modello anche quando il nome nell'Excel contiene marca/spazi diversi. Per ogni codice finanziamento, se ci sono più righe dello stesso modello viene scelta quella senza anticipo. Il prezzo viene aggiornato dalla riga selezionata.</p>
+<p class="hint">Legge FN07S/FN07U a 30 rate, esclude pack e _sv, associa il modello ignorando marca, maiuscole/minuscole e spazi, ma richiede la corrispondenza esatta del modello completo (es. 256GB). Per ogni codice finanziamento, se ci sono più righe dello stesso modello viene scelta quella senza anticipo. Il prezzo viene aggiornato dalla riga selezionata.</p>
 <input id="excel" type="file" accept=".xlsx,.xls,.csv"><div id="exres"></div><button id="apply" style="display:none">Applica prezzo + rate</button></div>
 <div class="card"><div class="actions"><button id="savecat">Salva catalogo</button><button id="publishcat">Salva + notifica</button></div></div>
 </section>
@@ -90,8 +90,15 @@ function norm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\
 function keyNorm(s){return norm(s).replace(/(prezzo|price|importo|amount|rate|rata|mesi|durata|finanziamento|fin|codice|anticipo|acconto)/g,"")}
 function rowVal(r,terms){const keys=Object.keys(r);const k=keys.find(k=>terms.some(t=>norm(k).includes(norm(t))));return k?r[k]:""}
 function num(v){const s=String(v??"").replace(/\s/g,"").replace(/€/g,"").replace(/\.(?=\d{3}(?:,|$))/g,"").replace(",",".");const m=s.match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):NaN}
-function normalizeModel(s){let n=norm(s);n=n.replace(/^apple/,"").replace(/^samsung/,"").replace(/^xiaomi/,"").replace(/^redmi/,"");return n}
-function modelMatch(a,b){const x=normalizeModel(a),y=normalizeModel(b);return !!x&&!!y&&(x===y||x.includes(y)||y.includes(x))}
+function normalizeModel(s){
+  let n=norm(s);
+  n=n.replace(/^apple/,"").replace(/^samsung/,"").replace(/^xiaomi/,"").replace(/^redmi/,"");
+  return n;
+}
+function modelMatch(a,b){
+  const x=normalizeModel(a), y=normalizeModel(b);
+  return !!x && !!y && x===y;
+}
 function getHeaderValue(r,groups){return rowVal(r,groups)}
 /* Fallback per il tracciato Excel attuale:
    E=modello, G=prezzo, I=codice finanziamento, L=numero rate,
@@ -116,7 +123,8 @@ function getRateCount(r){
   return String(getHeaderValue(r,["numero rate","n rate","nrate","numero di rate","rate","mesi","durata"])||"").trim();
 }
 function getAdvance(r){
-  const fallback=String(excelFallback(r,12)||"").trim();
+  const rawFallback=excelFallback(r,12);
+  const fallback=String(rawFallback ?? "").trim();
   if(fallback!==""){
     const n=num(fallback);
     if(Number.isFinite(n)) return n;
@@ -152,7 +160,7 @@ function validRow(r){
   const amount=getInstallmentAmount(r);
   if(!name||!/^FN07[SU]$/.test(fin)||!/(^|\D)30(\D|$)/.test(rate)||/\bpack\b/i.test(name)||/_sv\b/i.test(name)||!amount)return null;
   const advance=getAdvance(r);
-  return {row:r,name,fin,months:30,amount:amount.raw,value:amount.value,advance,price:getPrice(r)};
+  return {row:r,excelRow:Number(r.__excelRow)||0,name,fin,months:30,amount:amount.raw,value:amount.value,advance,price:getPrice(r)};
 }
 function selectFinancingRows(rows,productName){
   const candidates=rows.map(validRow).filter(Boolean).filter(x=>modelMatch(x.name,productName));
@@ -162,7 +170,7 @@ function selectFinancingRows(rows,productName){
     const list=byFin[fin];
     if(!list.length)continue;
     const zero=list.filter(x=>Number.isFinite(x.advance)&&Math.abs(x.advance)<0.005);
-    if(zero.length)selected[fin]=zero.sort((a,b)=>a.value-b.value)[0];
+    if(zero.length)selected[fin]=zero[0];
     else{
       const known=list.filter(x=>Number.isFinite(x.advance));
       selected[fin]=(known.length?known:list).sort((a,b)=>(a.advance??Infinity)-(b.advance??Infinity)||a.value-b.value)[0];
@@ -170,13 +178,20 @@ function selectFinancingRows(rows,productName){
   }
   return selected;
 }
-async function readExcel(file){const wb=XLSX.read(await file.arrayBuffer(),{type:"array"});return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""})}
+async function readExcel(file){
+  const wb=XLSX.read(await file.arrayBuffer(),{type:"array"});
+  const sheet=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(sheet,{defval:""});
+  /* Nel listino corrente l'intestazione è alla riga 4: i dati iniziano alla riga 5. */
+  return rows.map((r,i)=>({...r,__excelRow:i+5}));
+}
 $("excel").onchange=async e=>{
   try{
     const file=e.target.files[0];if(!file)return;
     const rows=await readExcel(file);
     pendingRates=(cfg.products||[]).map(p=>{
-      const selected=selectFinancingRows(rows,p.name);
+      const matchName=[p.brand,p.name,p.spec].filter(Boolean).join(" ");
+      const selected=selectFinancingRows(rows,matchName);
       const list=Object.entries(selected).map(([fin,x])=>({fin,...x}));
       const priceRow=list.find(x=>x.price)||null;
       return {p,selected:list,price:priceRow?.price||""};
@@ -184,7 +199,7 @@ $("excel").onchange=async e=>{
     const found=pendingRates.filter(x=>x.selected.length||x.price);
     $("exres").innerHTML=`<p class="hint">Trovati ${found.length} abbinamenti su ${(cfg.products||[]).length}. Per FN07S e FN07U la scelta è fatta separatamente e, quando presente, viene preferita la riga con anticipo 0 €.</p>`+
       (found.length?found.map(x=>{
-        const rates=x.selected.map(r=>`<div class="ratebox"><b>${esc(r.fin)}</b> · ${r.advance===0?"<span class='rateok'>anticipo 0 €</span>":Number.isFinite(r.advance)?`<span class='warn'>anticipo ${esc(r.advance)}</span>`:"<span class='rateno'>anticipo non rilevato</span>"} · 30 × <b>${esc(r.amount)}</b></div>`).join("");
+        const rates=x.selected.map(r=>`<div class="ratebox"><b>${esc(r.fin)}</b> · riga Excel <b>${esc(r.excelRow)}</b> · ${r.advance===0?"<span class='rateok'>anticipo 0 €</span>":Number.isFinite(r.advance)?`<span class='warn'>anticipo ${esc(r.advance)}</span>`:"<span class='rateno'>anticipo non rilevato</span>"} · 30 × <b>${esc(r.amount)}</b></div>`).join("");
         return `<div class="item"><b>${esc(x.p.name)}</b>${x.price?`<div class="sub">Prezzo Excel: <b>${esc(x.price)}</b></div>`:""}${rates||"<div class='sub'>Nessuna rata valida trovata.</div>"}</div>`;
       }).join(""):"<p class='hint'>Nessun abbinamento trovato.</p>");
     $("apply").style.display=found.length?"block":"none";
