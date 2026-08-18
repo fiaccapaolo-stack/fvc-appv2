@@ -41,7 +41,7 @@ button{border:0;border-radius:9px;background:var(--g);color:#141821;padding:10px
 <div class="card"><h2>Excel — prezzo + rate</h2>
 <p class="hint">Legge FN07S/FN07U a 30 rate, esclude pack e _sv, associa il modello ignorando marca, maiuscole/minuscole e spazi, ma richiede la corrispondenza esatta del modello completo (es. 256GB). Per ogni codice finanziamento, se ci sono più righe dello stesso modello viene scelta quella senza anticipo. Il prezzo viene aggiornato dalla riga selezionata.</p>
 <input id="excel" type="file" accept=".xlsx,.xls,.csv"><div id="exres"></div><button id="apply" style="display:none">Applica prezzo + rate</button></div>
-<div class="card"><div class="actions"><button id="savecat">Salva catalogo</button><button id="publishcat">Salva + notifica</button></div></div>
+<div class="card"><div class="actions"><button id="savecat">Salva catalogo definitivamente</button><button id="publishcat">Salva definitivamente + notifica</button></div></div>
 </section>
 
 <section id="telefonia" class="page">
@@ -69,6 +69,11 @@ const $=id=>document.getElementById(id), esc=s=>String(s??"").replace(/[&<>"']/g
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 function toast(m,e=false){const t=$("toast");t.textContent=m;t.className="toast show"+(e?" err":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.className="toast",3200)}
 async function api(url,opt={}){const r=await fetch(url,{...opt,headers:{"Content-Type":"application/json","x-admin-password":password,...(opt.headers||{})}});let d;try{d=await r.json()}catch{throw Error("Risposta non JSON dal server")};if(!r.ok)throw Error(d.error||"Errore server");return d}
+async function saveCatalogPermanent(silent=false){
+  cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});
+  if(!silent){render();toast("Catalogo salvato definitivamente");}
+  return cfg;
+}
 function render(){renderProducts();renderPlans();renderOffers();renderNews();renderShop()}
 function renderProducts(){const a=cfg.products||[];$("products").innerHTML=a.length?a.map((p,i)=>`<div class="item"><b>${esc(p.name)}</b> <span class="badge">${esc(p.brand||"")}</span><div class="sub">${esc(p.spec||"")} · ${esc(p.price||"")} · rate: ${(p.installments||[]).length}</div><div class="item-actions"><button class="secondary" onclick="editP(${i})">Modifica</button><button class="danger" onclick="delP(${i})">Elimina</button></div></div>`).join(""):"<p class='hint'>Catalogo vuoto.</p>"}
 function renderPlans(){const a=cfg.plans||[];$("plans").innerHTML=a.length?a.map((p,i)=>`<div class="item"><b>${esc(p.name)}</b> <span class="badge">${esc(p.carrier||"")}</span><span class="badge">${esc(p.type||"mobile")}</span><div class="sub">${esc(p.price||"")} · ${esc(p.details||"")}</div><div class="item-actions"><button class="secondary" onclick="editPlan(${i})">Modifica</button><button class="danger" onclick="delPlan(${i})">Elimina</button></div></div>`).join(""):"<p class='hint'>Nessuna offerta.</p>"}
@@ -82,8 +87,8 @@ function newP(){$("pi").value="-1";["pn","pb","ps","pp"].forEach(x=>$(x).value="
 $("newProduct").onclick=newP;$("cancelp").onclick=()=>$("productForm").style.display="none";
 $("addrate").onclick=()=>{const d=document.createElement("div");d.className="rate";d.innerHTML='<input value="30 rate"><input placeholder="19,99€/mese"><button class="danger" onclick="this.parentElement.remove()">×</button>';$("rates").appendChild(d)}
 $("pf").onchange=async e=>{const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{pimg=fr.result;$("pimg").src=pimg;$("pimg").style.display="block"};fr.readAsDataURL(f)}
-$("savep").onclick=async()=>{const installments=readRates();const p={name:$("pn").value.trim(),brand:$("pb").value.trim(),spec:$("ps").value.trim(),price:$("pp").value.trim(),stock:Number($("pst").value)||1,image:pimg,installments,rate:installments[0]?.amount||""};if(!p.name)return toast("Inserisci il nome",true);const i=Number($("pi").value);if(i<0)cfg.products.push({id:uid(),...p});else cfg.products[i]={...cfg.products[i],...p};try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});render();$("productForm").style.display="none";toast("Smartphone salvato")}catch(e){toast(e.message,true)}}
-window.editP=editP;window.delP=async i=>{if(!confirm("Eliminare?"))return;cfg.products.splice(i,1);try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});render();toast("Eliminato")}catch(e){toast(e.message,true)}}
+$("savep").onclick=async()=>{const installments=readRates();const p={name:$("pn").value.trim(),brand:$("pb").value.trim(),spec:$("ps").value.trim(),price:$("pp").value.trim(),stock:Number($("pst").value)||1,image:pimg,installments,rate:installments[0]?.amount||""};if(!p.name)return toast("Inserisci il nome",true);const i=Number($("pi").value);if(i<0)cfg.products.push({id:uid(),...p});else cfg.products[i]={...cfg.products[i],...p};try{await saveCatalogPermanent(true);render();$("productForm").style.display="none";toast("Smartphone salvato definitivamente")}catch(e){toast(e.message,true)}}
+window.editP=editP;window.delP=async i=>{if(!confirm("Eliminare?"))return;cfg.products.splice(i,1);try{await saveCatalogPermanent(true);render();toast("Prodotto eliminato definitivamente")}catch(e){toast(e.message,true)}}
 
 /* Excel: normalizzazione robusta */
 function norm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"")}
@@ -233,8 +238,8 @@ $("apply").onclick=async()=>{
     }
   }
   try{
-    cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});
-    render();$("apply").style.display="none";toast("Prezzi e rate aggiornati");
+    await saveCatalogPermanent(true);
+    render();$("apply").style.display="none";toast("Prezzi e rate salvati definitivamente");
   }catch(e){toast(e.message,true)}
 }
 
@@ -256,7 +261,7 @@ window.delNews=async i=>{if(!confirm("Eliminare?"))return;cfg.news.splice(i,1);t
 
 $("saveshop").onclick=async()=>{const hours=$("sh").value.split("\n").map(x=>x.split("|")).filter(x=>x.length>=2).map(x=>({label:x[0].trim(),value:x.slice(1).join("|").trim()}));try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({shopName:$("sn").value.trim(),phone:$("sp").value.trim(),address:$("sa").value.trim(),whatsapp:$("sw").value.trim(),publicUrl:$("su").value.trim(),hours})});render();toast("Dati negozio salvati")}catch(e){toast(e.message,true)}}
 
-$("savecat").onclick=async()=>{try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});render();toast("Catalogo salvato")}catch(e){toast(e.message,true)}}
+$("savecat").onclick=async()=>{try{await saveCatalogPermanent(false)}catch(e){toast(e.message,true)}}
 $("publishcat").onclick=async()=>{try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products,notify:{title:"FVC Project · Catalogo aggiornato",body:"Il catalogo è stato aggiornato."}})});render();toast("Catalogo salvato e notifica inviata")}catch(e){toast(e.message,true)}}
 $("sendn").onclick=async()=>{try{await api("/api/admin/notify",{method:"POST",body:JSON.stringify({title:$("nott").value.trim(),body:$("notb").value.trim()||"Abbiamo aggiornato il catalogo con nuove proposte. Apri l'app per scoprire le ultime novità."})});toast("Notifica inviata")}catch(e){toast(e.message,true)}}
 
