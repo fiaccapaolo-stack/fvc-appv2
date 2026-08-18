@@ -95,9 +95,26 @@ function normalizeModel(s){
   n=n.replace(/^apple/,"").replace(/^samsung/,"").replace(/^xiaomi/,"").replace(/^redmi/,"");
   return n;
 }
+function modelCore(s){
+  return normalizeModel(s).replace(/(?:64|128|256|512|1024)gb/g,"").replace(/(?:1|2)tb/g,"");
+}
+function modelStorage(s){
+  const n=normalizeModel(s);
+  const m=n.match(/(?:64|128|256|512|1024)gb|(?:1|2)tb/);
+  return m?m[0]:"";
+}
 function modelMatch(a,b){
-  const x=normalizeModel(a), y=normalizeModel(b);
-  return !!x && !!y && x===y;
+  const x=modelCore(a), y=modelCore(b);
+  if(!x||!y||x!==y)return false;
+  const sx=modelStorage(a), sy=modelStorage(b);
+  return !sx || !sy || sx===sy;
+}
+function buildProductMatchName(p){
+  const name=String(p?.name||"").trim();
+  const brand=String(p?.brand||"").trim();
+  const spec=String(p?.spec||"").trim();
+  const storage=modelStorage(spec);
+  return [brand,name,storage].filter(Boolean).join(" ");
 }
 function getHeaderValue(r,groups){return rowVal(r,groups)}
 /* Fallback per il tracciato Excel attuale:
@@ -192,7 +209,7 @@ $("excel").onchange=async e=>{
     const file=e.target.files[0];if(!file)return;
     const rows=await readExcel(file);
     pendingRates=(cfg.products||[]).map(p=>{
-      const matchName=[p.brand,p.name,p.spec].filter(Boolean).join(" ");
+      const matchName=buildProductMatchName(p);
       const selected=selectFinancingRows(rows,matchName);
       const list=Object.entries(selected).map(([fin,x])=>({fin,...x}));
       const priceRow=list.find(x=>x.price)||null;
