@@ -93,27 +93,56 @@ function num(v){const s=String(v??"").replace(/\s/g,"").replace(/€/g,"").repla
 function normalizeModel(s){let n=norm(s);n=n.replace(/^apple/,"").replace(/^samsung/,"").replace(/^xiaomi/,"").replace(/^redmi/,"");return n}
 function modelMatch(a,b){const x=normalizeModel(a),y=normalizeModel(b);return !!x&&!!y&&(x===y||x.includes(y)||y.includes(x))}
 function getHeaderValue(r,groups){return rowVal(r,groups)}
+/* Fallback per il tracciato Excel attuale:
+   E=modello, G=prezzo, I=codice finanziamento, L=numero rate,
+   M=anticipo, N=rata. Serve quando le intestazioni non sono riconoscibili. */
+function excelFallback(r,idx){
+  const keys=Object.keys(r);
+  return keys[idx]!==undefined?r[keys[idx]]:"";
+}
+function getModelValue(r){
+  const v=getHeaderValue(r,["prodotto","modello","descrizione","device","nome"]);
+  return String(v||"").trim() || String(excelFallback(r,4)||"").trim();
+}
+function getFinValue(r){
+  const v=getHeaderValue(r,["codice finanziamento","codicefin","cod fin","finanziamento","fin"]);
+  return String(v||"").trim() || String(excelFallback(r,8)||"").trim();
+}
+function getRateCount(r){
+  const v=getHeaderValue(r,["numero rate","n rate","nrate","numero di rate","rate","mesi","durata"]);
+  return String(v||"").trim() || String(excelFallback(r,11)||"").trim();
+}
 function getAdvance(r){
-  const v=getHeaderValue(r,["anticipo","acconto","anticipo iniziale","importo anticipo","contributo iniziale","upfront","iniziale"]);
-  const n=num(v);
-  return Number.isFinite(n)?n:NaN;
+  const v=getHeaderValue(r,["anticipo","acconto","anticipo iniziale","importo anticipo","contributo iniziale","upfront"]);
+  const raw=String(v??"").trim();
+  const n=num(raw);
+  if(raw!=="" && Number.isFinite(n)) return n;
+  const fallback=num(excelFallback(r,12));
+  return Number.isFinite(fallback)?fallback:NaN;
 }
 function getPrice(r){
   const v=getHeaderValue(r,["prezzo vendita","prezzo di vendita","prezzo","price","importo vendita","prezzo listino","valore"]);
-  const n=num(v);
-  return Number.isFinite(n)?String(v).trim():"";
+  const raw=String(v??"").trim();
+  const n=num(raw);
+  if(raw!=="" && Number.isFinite(n)) return raw;
+  const fallback=String(excelFallback(r,6)||"").trim();
+  return Number.isFinite(num(fallback))?fallback:"";
 }
 function getInstallmentAmount(r){
-  const v=getHeaderValue(r,["importo rata","rata mensile","rata","canone mensile","canone","importo"]);
-  const n=num(v);
-  return Number.isFinite(n)?{raw:String(v).trim(),value:n} : null;
+  const v=getHeaderValue(r,["importo rata","rata mensile","rata","canone mensile","canone"]);
+  const raw=String(v??"").trim();
+  const n=num(raw);
+  if(raw!=="" && Number.isFinite(n)) return {raw,value:n};
+  const fallback=String(excelFallback(r,13)||"").trim();
+  const fn=num(fallback);
+  return Number.isFinite(fn)?{raw:fallback,value:fn}:null;
 }
 function validRow(r){
-  const name=String(getHeaderValue(r,["prodotto","modello","descrizione","device","nome"])).trim();
-  const fin=String(getHeaderValue(r,["codice finanziamento","codicefin","cod fin","finanziamento","fin"])).toUpperCase().replace(/\s/g,"");
-  const rate=String(getHeaderValue(r,["numero rate","n rate","nrate","numero di rate","rate","mesi","durata"]));
+  const name=getModelValue(r);
+  const fin=getFinValue(r).toUpperCase().replace(/\s/g,"");
+  const rate=getRateCount(r);
   const amount=getInstallmentAmount(r);
-  if(!name||!/^FN07[SU]$/.test(fin)||!/(^|\D)30(\D|$)/.test(rate)||/\bpack\b/i.test(name)||/_sv\b/i.test(name)||!amount)return null;
+  if(!name||!/^FN07[SU]$/.test(fin)||!/(^|\\D)30(\\D|$)/.test(rate)||/\\bpack\\b/i.test(name)||/_sv\\b/i.test(name)||!amount)return null;
   const advance=getAdvance(r);
   return {row:r,name,fin,months:30,amount:amount.raw,value:amount.value,advance,price:getPrice(r)};
 }
