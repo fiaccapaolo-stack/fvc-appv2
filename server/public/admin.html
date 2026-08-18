@@ -181,8 +181,10 @@ function selectFinancingRows(rows,productName){
 async function readExcel(file){
   const wb=XLSX.read(await file.arrayBuffer(),{type:"array"});
   const sheet=wb.Sheets[wb.SheetNames[0]];
-  const rows=XLSX.utils.sheet_to_json(sheet,{defval:""});
-  /* Nel listino corrente l'intestazione è alla riga 4: i dati iniziano alla riga 5. */
+  /* Nel listino corrente la vera intestazione è la riga 4.
+   Le prime 3 righe sono note/titolo e NON devono diventare intestazioni.
+   range:3 significa: usa la riga Excel 4 come header e parte dai dati alla riga 5. */
+  const rows=XLSX.utils.sheet_to_json(sheet,{range:3,defval:""});
   return rows.map((r,i)=>({...r,__excelRow:i+5}));
 }
 $("excel").onchange=async e=>{
