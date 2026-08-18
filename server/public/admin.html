@@ -5,7 +5,7 @@
 <title>FVC App v2 — Admin</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#10151c;--s:#1a222c;--s2:#212b37;--l:#2b3644;--t:#edf1f5;--m:#8b98a8;--g:#d4af37;--r:#e5675f}
+:root{--bg:#10151c;--s:#1a222c;--s2:#212b37;--l:#2b3644;--t:#edf1f5;--m:#8b98a8;--g:#d4af37;--r:#e5675f;--ok:#4fd8a8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:14px system-ui,sans-serif;padding:22px 14px 60px}.wrap{max-width:760px;margin:auto}
 .card{background:var(--s);border:1px solid var(--l);border-radius:14px;padding:15px;margin:12px 0}
 h1{font-size:21px;margin:0 0 5px}h2{font-size:16px;margin:0 0 10px}.hint,.muted{color:var(--m);font-size:12px}
@@ -16,13 +16,14 @@ button{border:0;border-radius:9px;background:var(--g);color:#141821;padding:10px
 .tabs{display:flex;gap:6px;overflow:auto;margin:18px 0 12px}.tabs button{background:transparent;color:var(--m);min-width:105px}.tabs button.active{color:var(--g);border-bottom:2px solid var(--g)}
 .page{display:none}.page.active{display:block}.item{border-top:1px solid var(--l);padding:12px 0}.item:first-child{border-top:0}.sub{color:var(--m);font-size:12px;margin-top:3px}.item-actions{display:flex;gap:7px;margin-top:8px}.item-actions button{padding:7px 10px;font-size:12px}.badge{display:inline-block;background:var(--s2);border-radius:99px;padding:3px 7px;font-size:10px;color:var(--m)}
 .rate{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin:7px 0}.preview{max-width:130px;max-height:130px;margin-top:8px;border-radius:10px;background:#fff}.toast{display:none;position:fixed;bottom:14px;left:14px;right:14px;max-width:730px;margin:auto;padding:12px;background:var(--s);border:1px solid #4fd8e8;border-radius:10px}.toast.show{display:block}.toast.err{border-color:var(--r);color:var(--r)}
+.ratebox{border:1px solid var(--l);border-radius:10px;padding:9px;margin-top:8px}.rateok{color:var(--ok)}.rateno{color:var(--m)}.warn{color:#f0c86a}
 @media(max-width:560px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body><div class="wrap">
 <div id="login" class="card"><h1>Pannello Admin — FVC App v2</h1><p class="hint">Collegato alla struttura dati v2.</p><label>Password</label><input id="pwd" type="password" autocomplete="current-password"><button id="loginBtn" style="width:100%;margin-top:8px">Accedi</button><p id="loginErr" class="hint" style="display:none;color:var(--r)"></p></div>
 <div id="panel" style="display:none">
-<h1>FVC App v2 — Gestione</h1><p class="hint">Il catalogo viene inserito a mano. L'Excel aggiorna esclusivamente le rate.</p>
+<h1>FVC App v2 — Gestione</h1><p class="hint">Il catalogo viene inserito a mano. L'Excel aggiorna automaticamente prezzo e rate.</p>
 <div class="tabs">
 <button class="active" data-p="catalogo">Catalogo</button><button data-p="telefonia">Telefonia/Fibra</button><button data-p="offerte">Offerte</button><button data-p="novita">Novità</button><button data-p="negozio">Negozio/QR</button><button data-p="notifiche">Notifiche</button>
 </div>
@@ -36,7 +37,10 @@ button{border:0;border-radius:9px;background:var(--g);color:#141821;padding:10px
 <label>Foto dal PC</label><input id="pf" type="file" accept="image/*"><img id="pimg" class="preview" style="display:none">
 <label>Rate</label><div id="rates"></div><button class="secondary" id="addrate">+ rata</button>
 <div class="actions" style="margin-top:10px"><button id="savep">Salva</button><button class="secondary" id="cancelp">Annulla</button></div></div>
-<div class="card"><h2>Excel — solo rate</h2><p class="hint">Filtri: FIN FN07S/FN07U, 30 rate, esclusione pack e _sv. Per ogni prodotto già presente viene scelta la rata più bassa.</p><input id="excel" type="file" accept=".xlsx,.xls,.csv"><div id="exres"></div><button id="apply" style="display:none">Applica rate</button></div>
+
+<div class="card"><h2>Excel — prezzo + rate</h2>
+<p class="hint">Legge FN07S/FN07U a 30 rate, esclude pack e _sv, associa il modello anche quando il nome nell'Excel contiene marca/spazi diversi. Per ogni codice finanziamento, se ci sono più righe dello stesso modello viene scelta quella senza anticipo. Il prezzo viene aggiornato dalla riga selezionata.</p>
+<input id="excel" type="file" accept=".xlsx,.xls,.csv"><div id="exres"></div><button id="apply" style="display:none">Applica prezzo + rate</button></div>
 <div class="card"><div class="actions"><button id="savecat">Salva catalogo</button><button id="publishcat">Salva + notifica</button></div></div>
 </section>
 
@@ -56,7 +60,7 @@ button{border:0;border-radius:9px;background:var(--g);color:#141821;padding:10px
 </section>
 
 <section id="negozio" class="page"><div class="card"><h2>Dati negozio</h2><div class="grid"><div><label>Nome</label><input id="sn"></div><div><label>Telefono</label><input id="sp"></div></div><label>Indirizzo</label><input id="sa"><label>WhatsApp</label><input id="sw"><label>URL pubblico</label><input id="su"><label>Orari (uno per riga: Giorno | Orario)</label><textarea id="sh"></textarea><button id="saveshop" style="width:100%">Salva dati negozio</button></div><div class="card"><h2>QR</h2><img id="qr" style="width:260px;max-width:100%;background:#fff;padding:8px;border-radius:10px" alt="QR"></div></section>
-<section id="notifiche" class="page"><div class="card"><h2>Notifica manuale</h2><p class="hint">La notifica intelligente non viene usata.</p><label>Titolo</label><input id="nott" value="📢 Novità FVC"><label>Messaggio</label><textarea id="notb">Abbiamo aggiornato il catalogo con nuove proposte. Apri l\'app per scoprire le ultime novità.</textarea><button id="sendn" style="width:100%">Invia notifica</button></div></section>
+<section id="notifiche" class="page"><div class="card"><h2>Notifica manuale</h2><p class="hint">La notifica intelligente non viene usata.</p><label>Titolo</label><input id="nott" value="📢 Novità FVC"><label>Messaggio</label><textarea id="notb">Abbiamo aggiornato il catalogo con nuove proposte. Apri l'app per scoprire le ultime novità.</textarea><button id="sendn" style="width:100%">Invia notifica</button></div></section>
 </div></div><div id="toast" class="toast"></div>
 
 <script>
@@ -81,16 +85,92 @@ $("pf").onchange=async e=>{const f=e.target.files[0];if(!f)return;const fr=new F
 $("savep").onclick=async()=>{const installments=readRates();const p={name:$("pn").value.trim(),brand:$("pb").value.trim(),spec:$("ps").value.trim(),price:$("pp").value.trim(),stock:Number($("pst").value)||1,image:pimg,installments,rate:installments[0]?.amount||""};if(!p.name)return toast("Inserisci il nome",true);const i=Number($("pi").value);if(i<0)cfg.products.push({id:uid(),...p});else cfg.products[i]={...cfg.products[i],...p};try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});render();$("productForm").style.display="none";toast("Smartphone salvato")}catch(e){toast(e.message,true)}}
 window.editP=editP;window.delP=async i=>{if(!confirm("Eliminare?"))return;cfg.products.splice(i,1);try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});render();toast("Eliminato")}catch(e){toast(e.message,true)}}
 
+/* Excel: normalizzazione robusta */
 function norm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"")}
-function rowVal(r,terms){const k=Object.keys(r).find(k=>terms.some(t=>k.toLowerCase().replace(/[\s_]/g,"").includes(t)));return k?r[k]:""}
-function num(v){const m=String(v??"").replace(/\s/g,"").replace(/€/g,"").replace(/\.(?=\d{3}(?:,|$))/g,"").replace(",",".").match(/\d+(?:\.\d+)?/);return m?Number(m[0]):NaN}
-function validRow(r){const name=String(rowVal(r,["prodotto","modello","descrizione","device","nome"]));const fin=String(rowVal(r,["codicefin","codfin","fin"])).toUpperCase().replace(/\s/g,"");const rate=String(rowVal(r,["nrate","numerorate","rate","mesi","durata"]));const amount=rowVal(r,["rata","canone","importorata","importo"]);if(!/^FN07[SU]$/.test(fin)||!/(^|\D)30(\D|$)/.test(rate)||/\bpack\b/i.test(name)||/_sv\b/i.test(name))return null;const v=num(amount);return Number.isFinite(v)?{name,amount:String(amount),value:v}:null}
+function keyNorm(s){return norm(s).replace(/(prezzo|price|importo|amount|rate|rata|mesi|durata|finanziamento|fin|codice|anticipo|acconto)/g,"")}
+function rowVal(r,terms){const keys=Object.keys(r);const k=keys.find(k=>terms.some(t=>norm(k).includes(norm(t))));return k?r[k]:""}
+function num(v){const s=String(v??"").replace(/\s/g,"").replace(/€/g,"").replace(/\.(?=\d{3}(?:,|$))/g,"").replace(",",".");const m=s.match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):NaN}
+function normalizeModel(s){let n=norm(s);n=n.replace(/^apple/,"").replace(/^samsung/,"").replace(/^xiaomi/,"").replace(/^redmi/,"");return n}
+function modelMatch(a,b){const x=normalizeModel(a),y=normalizeModel(b);return !!x&&!!y&&(x===y||x.includes(y)||y.includes(x))}
+function getHeaderValue(r,groups){return rowVal(r,groups)}
+function getAdvance(r){
+  const v=getHeaderValue(r,["anticipo","acconto","anticipo iniziale","importo anticipo","contributo iniziale","upfront","iniziale"]);
+  const n=num(v);
+  return Number.isFinite(n)?n:NaN;
+}
+function getPrice(r){
+  const v=getHeaderValue(r,["prezzo vendita","prezzo di vendita","prezzo","price","importo vendita","prezzo listino","valore"]);
+  const n=num(v);
+  return Number.isFinite(n)?String(v).trim():"";
+}
+function getInstallmentAmount(r){
+  const v=getHeaderValue(r,["importo rata","rata mensile","rata","canone mensile","canone","importo"]);
+  const n=num(v);
+  return Number.isFinite(n)?{raw:String(v).trim(),value:n} : null;
+}
+function validRow(r){
+  const name=String(getHeaderValue(r,["prodotto","modello","descrizione","device","nome"])).trim();
+  const fin=String(getHeaderValue(r,["codice finanziamento","codicefin","cod fin","finanziamento","fin"])).toUpperCase().replace(/\s/g,"");
+  const rate=String(getHeaderValue(r,["numero rate","n rate","nrate","numero di rate","rate","mesi","durata"]));
+  const amount=getInstallmentAmount(r);
+  if(!name||!/^FN07[SU]$/.test(fin)||!/(^|\D)30(\D|$)/.test(rate)||/\bpack\b/i.test(name)||/_sv\b/i.test(name)||!amount)return null;
+  const advance=getAdvance(r);
+  return {row:r,name,fin,months:30,amount:amount.raw,value:amount.value,advance,price:getPrice(r)};
+}
+function selectFinancingRows(rows,productName){
+  const candidates=rows.map(validRow).filter(Boolean).filter(x=>modelMatch(x.name,productName));
+  const byFin={FN07S:candidates.filter(x=>x.fin==="FN07S"),FN07U:candidates.filter(x=>x.fin==="FN07U")};
+  const selected={};
+  for(const fin of ["FN07S","FN07U"]){
+    const list=byFin[fin];
+    if(!list.length)continue;
+    const zero=list.filter(x=>Number.isFinite(x.advance)&&Math.abs(x.advance)<0.005);
+    if(zero.length)selected[fin]=zero.sort((a,b)=>a.value-b.value)[0];
+    else{
+      const known=list.filter(x=>Number.isFinite(x.advance));
+      selected[fin]=(known.length?known:list).sort((a,b)=>(a.advance??Infinity)-(b.advance??Infinity)||a.value-b.value)[0];
+    }
+  }
+  return selected;
+}
 async function readExcel(file){const wb=XLSX.read(await file.arrayBuffer(),{type:"array"});return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""})}
-$("excel").onchange=async e=>{try{const rows=await readExcel(e.target.files[0]);pendingRates=(cfg.products||[]).map(p=>{const m=rows.map(validRow).filter(Boolean).filter(x=>norm(x.name)===norm(p.name)||norm(x.name).includes(norm(p.name))||norm(p.name).includes(norm(x.name))).sort((a,b)=>a.value-b.value)[0];return {p,m}});const f=pendingRates.filter(x=>x.m);$("exres").innerHTML=`<p class="hint">Trovati ${f.length} abbinamenti su ${cfg.products.length}.</p>`+f.map(x=>`<div class="item">${esc(x.p.name)} → <b>${esc(x.m.amount)}</b></div>`).join("");$("apply").style.display=f.length?"block":"none"}catch(err){toast(err.message,true)}}
-$("apply").onclick=async()=>{for(const x of pendingRates||[])if(x.m){x.p.installments=[{months:"30 rate",amount:x.m.amount}];x.p.rate=x.m.amount;}try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});render();$("apply").style.display="none";toast("Rate aggiornate")}catch(e){toast(e.message,true)}}
+$("excel").onchange=async e=>{
+  try{
+    const file=e.target.files[0];if(!file)return;
+    const rows=await readExcel(file);
+    pendingRates=(cfg.products||[]).map(p=>{
+      const selected=selectFinancingRows(rows,p.name);
+      const list=Object.entries(selected).map(([fin,x])=>({fin,...x}));
+      const priceRow=list.find(x=>x.price)||null;
+      return {p,selected:list,price:priceRow?.price||""};
+    });
+    const found=pendingRates.filter(x=>x.selected.length||x.price);
+    $("exres").innerHTML=`<p class="hint">Trovati ${found.length} abbinamenti su ${(cfg.products||[]).length}. Per FN07S e FN07U la scelta è fatta separatamente e, quando presente, viene preferita la riga con anticipo 0 €.</p>`+
+      (found.length?found.map(x=>{
+        const rates=x.selected.map(r=>`<div class="ratebox"><b>${esc(r.fin)}</b> · ${r.advance===0?"<span class='rateok'>anticipo 0 €</span>":Number.isFinite(r.advance)?`<span class='warn'>anticipo ${esc(r.advance)}</span>`:"<span class='rateno'>anticipo non rilevato</span>"} · 30 × <b>${esc(r.amount)}</b></div>`).join("");
+        return `<div class="item"><b>${esc(x.p.name)}</b>${x.price?`<div class="sub">Prezzo Excel: <b>${esc(x.price)}</b></div>`:""}${rates||"<div class='sub'>Nessuna rata valida trovata.</div>"}</div>`;
+      }).join(""):"<p class='hint'>Nessun abbinamento trovato.</p>");
+    $("apply").style.display=found.length?"block":"none";
+  }catch(err){toast(err.message,true)}
+}
+$("apply").onclick=async()=>{
+  for(const x of pendingRates||[]){
+    if(x.price)x.p.price=x.price;
+    if(x.selected.length){
+      x.p.installments=x.selected.map(r=>({months:"30 rate",amount:r.amount,financing:r.fin,advance:Number.isFinite(r.advance)?String(r.advance):""}));
+      x.p.rate=x.selected[0]?.amount||"";
+    }
+  }
+  try{
+    cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});
+    render();$("apply").style.display="none";toast("Prezzi e rate aggiornati");
+  }catch(e){toast(e.message,true)}
+}
 
-let planFileData="",planFileName="";function clearPlan(){$("pli").value="-1";["pln","plp","pld"].forEach(x=>$(x).value="");$("plf").value="";planFileData="";planFileName=""}
-$("plf").onchange=e=>{const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{planFileData=fr.result;planFileName=f.name};fr.readAsDataURL(f)};$("savepl").onclick=async()=>{const i=Number($("pli").value),p={carrier:$("pc").value,type:$("pt").value,name:$("pln").value.trim(),price:$("plp").value.trim(),details:$("pld").value.trim(),file:planFileData,fileName:planFileName};if(!p.name)return toast("Inserisci il nome",true);if(i<0)cfg.plans.push({id:uid(),...p});else cfg.plans[i]={...cfg.plans[i],...p};try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({plans:cfg.plans})});render();clearPlan();toast("Offerta salvata")}catch(e){toast(e.message,true)}}
+let planFileData="",planFileName="";
+function clearPlan(){$("pli").value="-1";["pln","plp","pld"].forEach(x=>$(x).value="");$("plf").value="";planFileData="";planFileName=""}
+$("plf").onchange=e=>{const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{planFileData=fr.result;planFileName=f.name};fr.readAsDataURL(f)}
+$("savepl").onclick=async()=>{const i=Number($("pli").value),p={carrier:$("pc").value,type:$("pt").value,name:$("pln").value.trim(),price:$("plp").value.trim(),details:$("pld").value.trim(),file:planFileData,fileName:planFileName};if(!p.name)return toast("Inserisci il nome",true);if(i<0)cfg.plans.push({id:uid(),...p});else cfg.plans[i]={...cfg.plans[i],...p};try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({plans:cfg.plans})});render();clearPlan();toast("Offerta salvata")}catch(e){toast(e.message,true)}}
 window.editPlan=i=>{const p=cfg.plans[i];$("pli").value=i;$("pc").value=p.carrier||"TIM";$("pt").value=p.type||"mobile";$("pln").value=p.name||"";$("plp").value=p.price||"";$("pld").value=p.details||"";planFileData=p.file||"";planFileName=p.fileName||""}
 window.delPlan=async i=>{if(!confirm("Eliminare?"))return;cfg.plans.splice(i,1);try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({plans:cfg.plans})});render();toast("Eliminato")}catch(e){toast(e.message,true)}};$("clearpl").onclick=clearPlan;$("saveplans").onclick=async()=>{try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({plans:cfg.plans})});toast("Telefonia/fibra salvata")}catch(e){toast(e.message,true)}}
 
@@ -104,9 +184,10 @@ window.editNews=i=>{const n=cfg.news[i];$("ni").value=n.id;$("ns").value=n.secti
 window.delNews=async i=>{if(!confirm("Eliminare?"))return;cfg.news.splice(i,1);try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({news:cfg.news})});render();toast("Eliminata")}catch(e){toast(e.message,true)}};$("clearn").onclick=clearNews;
 
 $("saveshop").onclick=async()=>{const hours=$("sh").value.split("\n").map(x=>x.split("|")).filter(x=>x.length>=2).map(x=>({label:x[0].trim(),value:x.slice(1).join("|").trim()}));try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({shopName:$("sn").value.trim(),phone:$("sp").value.trim(),address:$("sa").value.trim(),whatsapp:$("sw").value.trim(),publicUrl:$("su").value.trim(),hours})});render();toast("Dati negozio salvati")}catch(e){toast(e.message,true)}}
+
 $("savecat").onclick=async()=>{try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products})});render();toast("Catalogo salvato")}catch(e){toast(e.message,true)}}
 $("publishcat").onclick=async()=>{try{cfg=await api("/api/admin/config",{method:"PUT",body:JSON.stringify({products:cfg.products,notify:{title:"FVC Project · Catalogo aggiornato",body:"Il catalogo è stato aggiornato."}})});render();toast("Catalogo salvato e notifica inviata")}catch(e){toast(e.message,true)}}
-$("sendn").onclick=async()=>{try{await api("/api/admin/notify",{method:"POST",body:JSON.stringify({title:$("nott").value.trim(),body:$("notb").value.trim()||"Abbiamo aggiornato il catalogo con nuove proposte. Apri l\'app per scoprire le ultime novità."})});toast("Notifica inviata")}catch(e){toast(e.message,true)}}
+$("sendn").onclick=async()=>{try{await api("/api/admin/notify",{method:"POST",body:JSON.stringify({title:$("nott").value.trim(),body:$("notb").value.trim()||"Abbiamo aggiornato il catalogo con nuove proposte. Apri l'app per scoprire le ultime novità."})});toast("Notifica inviata")}catch(e){toast(e.message,true)}}
 
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(b.dataset.p).classList.add("active")});
 $("loginBtn").onclick=async()=>{password=$("pwd").value;try{cfg=await api("/api/admin/config");offers=await api("/api/admin/offers");$("login").style.display="none";$("panel").style.display="block";render();toast("Accesso effettuato")}catch(e){$("loginErr").style.display="block";$("loginErr").textContent=e.message}}
