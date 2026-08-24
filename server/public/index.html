@@ -403,6 +403,16 @@
     background:none; border:none; color:var(--text-dim); font-size:18px;
     cursor:pointer; padding:0 4px; line-height:1;
   }
+  #desktop-install-bar{
+    position:fixed; left:16px; right:16px; bottom:16px;
+    background:var(--surface); border:1px solid var(--cyan);
+    border-radius:14px; padding:12px 14px; display:none;
+    align-items:center; gap:12px; box-shadow:0 10px 30px rgba(0,0,0,.4); z-index:50;
+  }
+  #desktop-install-bar.show{display:flex;}
+  #desktop-install-bar p{margin:0; font-size:12.5px; flex:1; line-height:1.4;}
+  #desktop-install-bar strong{display:block; font-size:13.5px; margin-bottom:2px;}
+  #desktop-install-bar .close{background:none; border:none; color:var(--text-dim); font-size:18px; cursor:pointer; padding:0 4px; line-height:1;}
 
   #lightbox{
     position:fixed; inset:0; background:rgba(8,10,14,0.94);
@@ -668,6 +678,12 @@
 <div id="ios-install-bar">
   <p><strong id="ios-install-bar-name">Aggiungi Fvc Project alla Home</strong>Tocca <span class="ios-share-icon" aria-hidden="true">⬆</span> Condividi, poi "Aggiungi a Home".</p>
   <button class="close" id="ios-install-close" aria-label="Chiudi">×</button>
+</div>
+
+<div id="desktop-install-bar">
+  <p id="desktop-install-text"><strong>Installa Fvc Project sul computer</strong>Usa il menu del browser per aggiungere l'app.</p>
+  <button class="btn" id="desktop-install-help">Come fare</button>
+  <button class="close" id="desktop-install-close" aria-label="Chiudi">×</button>
 </div>
 
 <script>
@@ -1245,9 +1261,14 @@
   // ---- prompt di installazione personalizzato ----
   let deferredPrompt;
   const installBar = document.getElementById('install-bar');
+  const isWindows = /windows/i.test(navigator.userAgent);
+  const isMac = /macintosh|mac os x/i.test(navigator.userAgent) && !/iphone|ipad|ipod/i.test(navigator.userAgent);
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
+    document.getElementById('desktop-install-bar').classList.remove('show');
+    const label = isWindows ? 'Installa Fvc Project su Windows' : isMac ? 'Installa Fvc Project su Mac' : 'Aggiungi Fvc Project alla Home';
+    document.getElementById('install-bar-name').textContent = label;
     installBar.classList.add('show');
   });
   document.getElementById('install-btn').addEventListener('click', async () => {
@@ -1274,7 +1295,26 @@
   document.getElementById('ios-install-close').addEventListener('click', () => {
     iosBar.classList.remove('show');
   });
+
+  // Safari su Mac e alcuni browser desktop non espongono il prompt automatico.
+  // In questi casi mostriamo un aiuto chiaro, senza fingere un'installazione
+  // automatica che il sistema operativo non permette.
+  const desktopBar = document.getElementById('desktop-install-bar');
+  if (!isStandalone && (isWindows || isMac)) {
+    window.setTimeout(() => {
+      if (!deferredPrompt) desktopBar.classList.add('show');
+    }, 1800);
+  }
+  document.getElementById('desktop-install-help').addEventListener('click', () => {
+    const text = document.getElementById('desktop-install-text');
+    if (isWindows) {
+      text.innerHTML = '<strong>Installazione su Windows</strong>In Chrome o Edge apri il menu ⋮ e scegli “Installa Fvc Project” o “Installa app”.';
+    } else {
+      text.innerHTML = '<strong>Installazione su Mac</strong>Con Safari scegli File → “Aggiungi al Dock”. Con Chrome o Edge usa il menu ⋮ → “Installa Fvc Project”.';
+    }
+    document.getElementById('desktop-install-help').style.display = 'none';
+  });
+  document.getElementById('desktop-install-close').addEventListener('click', () => desktopBar.classList.remove('show'));
 </script>
 </body>
 </html>
-
