@@ -415,6 +415,13 @@
   #desktop-install-bar p{margin:0; font-size:12.5px; flex:1; line-height:1.4;}
   #desktop-install-bar strong{display:block; font-size:13.5px; margin-bottom:2px;}
   #desktop-install-bar .close{background:none; border:none; color:var(--text-dim); font-size:18px; cursor:pointer; padding:0 4px; line-height:1;}
+  #install-modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:24px; background:rgba(5,8,13,.78); z-index:250;}
+  #install-modal.show{display:flex;}
+  .install-modal-card{width:min(390px,100%); background:var(--surface); border:1px solid var(--gold); border-radius:18px; padding:22px; box-shadow:0 18px 55px rgba(0,0,0,.5); position:relative;}
+  .install-modal-card h3{font-family:var(--font-display); margin:0 28px 10px 0; font-size:21px;}
+  .install-modal-card p{color:var(--text-dim); margin:0 0 18px; line-height:1.5; font-size:14px;}
+  #install-modal-close{position:absolute; right:12px; top:9px; border:0; background:transparent; color:var(--text-dim); font-size:24px; cursor:pointer;}
+  #install-now{width:100%;}
 
   #lightbox{
     position:fixed; inset:0; background:rgba(8,10,14,0.94);
@@ -692,6 +699,15 @@
   <p id="desktop-install-text"><strong>Installa Fvc Project sul computer</strong>Usa il menu del browser per aggiungere l'app.</p>
   <button class="btn" id="desktop-install-help">Come fare</button>
   <button class="close" id="desktop-install-close" aria-label="Chiudi">×</button>
+</div>
+
+<div id="install-modal" role="dialog" aria-modal="true" aria-labelledby="install-modal-title">
+  <div class="install-modal-card">
+    <button id="install-modal-close" aria-label="Chiudi">×</button>
+    <h3 id="install-modal-title">Installa Fvc Project</h3>
+    <p id="install-modal-text"></p>
+    <button class="btn" id="install-now" type="button">Installa ora</button>
+  </div>
 </div>
 
 <script>
@@ -1326,24 +1342,42 @@
 
   // Pulsante sempre visibile nella home: porta subito alla procedura adatta
   // al dispositivo, anche quando il browser non mostra banner automatici.
-  document.getElementById('install-tile').addEventListener('click', async () => {
-    if (isStandalone) return;
-    if (isIOS) {
-      iosBar.classList.add('show');
-      return;
+  const installModal = document.getElementById('install-modal');
+  const installModalText = document.getElementById('install-modal-text');
+  const installNow = document.getElementById('install-now');
+  function openInstallModal(){
+    if (isStandalone) {
+      installModalText.textContent = 'L’app è già installata sul tuo dispositivo.';
+      installNow.style.display = 'none';
+    } else if (isIOS) {
+      installModalText.innerHTML = 'Su iPhone e iPad tocca <strong>Condividi</strong> (⬆), poi scegli <strong>“Aggiungi a Home”</strong>.';
+      installNow.style.display = 'none';
+    } else if (deferredPrompt) {
+      installModalText.textContent = 'Tocca “Installa ora” per aggiungere Fvc Project alle tue app.';
+      installNow.textContent = 'Installa ora';
+      installNow.style.display = 'block';
+    } else if (isWindows) {
+      installModalText.innerHTML = 'In Chrome o Edge apri il menu <strong>⋮</strong> e scegli <strong>“Installa Fvc Project”</strong> o <strong>“Installa app”</strong>.';
+      installNow.style.display = 'none';
+    } else if (isMac) {
+      installModalText.innerHTML = 'Con Safari scegli <strong>File → Aggiungi al Dock</strong>. Con Chrome o Edge usa il menu <strong>⋮ → Installa Fvc Project</strong>.';
+      installNow.style.display = 'none';
+    } else {
+      installModalText.innerHTML = 'Apri il menu del browser e scegli <strong>“Installa app”</strong> o <strong>“Aggiungi a schermata Home”</strong>.';
+      installNow.style.display = 'none';
     }
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBar.classList.remove('show');
-      return;
-    }
-    if (isWindows || isMac) {
-      desktopBar.classList.add('show');
-      return;
-    }
-    installBar.classList.add('show');
+    installModal.classList.add('show');
+  }
+  document.getElementById('install-tile').addEventListener('click', openInstallModal);
+  document.getElementById('install-modal-close').addEventListener('click', () => installModal.classList.remove('show'));
+  installModal.addEventListener('click', e => { if (e.target === installModal) installModal.classList.remove('show'); });
+  installNow.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installModal.classList.remove('show');
+    installBar.classList.remove('show');
   });
 </script>
 </body>
