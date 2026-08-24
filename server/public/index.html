@@ -126,6 +126,11 @@
   .tile:hover{border-color:var(--gold);}
   button.tile{font:inherit; cursor:pointer;}
   .tile.install-tile{border-color:rgba(79,216,232,.65);}
+  .install-platforms{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  .install-platform-btn{min-height:84px; padding:12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:14px; cursor:pointer; text-align:left; font-family:var(--font-body);}
+  .install-platform-btn:hover{border-color:var(--cyan);}
+  .install-platform-btn strong{display:block; color:var(--gold-soft); margin-bottom:4px;}
+  .install-platform-btn span{display:block; color:var(--text-dim); font-size:11.5px; line-height:1.25;}
   .tile .glyph{
     width:40px; height:40px;
     border-radius:12px;
@@ -550,6 +555,23 @@
     </button>
   </nav>
 </header>
+
+<!-- ===================== INSTALLAZIONE ===================== -->
+<section id="installa">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Sempre a portata di mano</p>
+      <h3>Installa l'app</h3>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:-6px;">Scegli il tuo dispositivo per aggiungere Fvc Project alle tue app.</p>
+  <div class="install-platforms">
+    <button type="button" class="install-platform-btn" data-install-platform="android"><strong>Android</strong><span>Installa direttamente dal browser</span></button>
+    <button type="button" class="install-platform-btn" data-install-platform="ios"><strong>iPhone / iPad</strong><span>Aggiungi l'app alla schermata Home</span></button>
+    <button type="button" class="install-platform-btn" data-install-platform="windows"><strong>Windows</strong><span>Installa con Chrome o Microsoft Edge</span></button>
+    <button type="button" class="install-platform-btn" data-install-platform="mac"><strong>Mac</strong><span>Aggiungi al Dock con Safari o Chrome</span></button>
+  </div>
+</section>
 
 <!-- ===================== CATALOGO ===================== -->
 <section id="catalogo">
@@ -1287,6 +1309,7 @@
   const installBar = document.getElementById('install-bar');
   const isWindows = /windows/i.test(navigator.userAgent);
   const isMac = /macintosh|mac os x/i.test(navigator.userAgent) && !/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
@@ -1378,6 +1401,31 @@
     deferredPrompt = null;
     installModal.classList.remove('show');
     installBar.classList.remove('show');
+  });
+
+  function showPlatformInstall(platform){
+    const title = document.getElementById('install-modal-title');
+    installNow.style.display = 'none';
+    if (platform === 'ios') {
+      title.textContent = 'Installa su iPhone o iPad';
+      installModalText.innerHTML = 'Apri questa pagina in <strong>Safari</strong>, tocca <strong>Condividi</strong> (⬆) e poi scegli <strong>“Aggiungi a Home”</strong>.';
+    } else if (platform === 'mac') {
+      title.textContent = 'Installa su Mac';
+      installModalText.innerHTML = 'Con <strong>Safari</strong> scegli <strong>File → Aggiungi al Dock</strong>. Con Chrome o Edge apri il menu <strong>⋮</strong> e scegli <strong>“Installa Fvc Project”</strong>.';
+      if (isMac && deferredPrompt) { installModalText.textContent = 'Tocca “Installa ora” per aggiungere Fvc Project alle app del Mac.'; installNow.style.display = 'block'; }
+    } else if (platform === 'windows') {
+      title.textContent = 'Installa su Windows';
+      installModalText.innerHTML = 'Apri questa pagina con <strong>Chrome</strong> o <strong>Microsoft Edge</strong>. Dal menu <strong>⋮</strong> scegli <strong>“Installa Fvc Project”</strong> o <strong>“Installa app”</strong>.';
+      if (isWindows && deferredPrompt) { installModalText.textContent = 'Tocca “Installa ora” per aggiungere Fvc Project alle app di Windows.'; installNow.style.display = 'block'; }
+    } else {
+      title.textContent = 'Installa su Android';
+      installModalText.innerHTML = 'Apri questa pagina con <strong>Chrome</strong>. Dal menu <strong>⋮</strong> scegli <strong>“Installa app”</strong> oppure <strong>“Aggiungi a schermata Home”</strong>.';
+      if (isAndroid && deferredPrompt) { installModalText.textContent = 'Tocca “Installa ora” per aggiungere Fvc Project alla schermata Home.'; installNow.style.display = 'block'; }
+    }
+    installModal.classList.add('show');
+  }
+  document.querySelectorAll('[data-install-platform]').forEach(button => {
+    button.addEventListener('click', () => showPlatformInstall(button.dataset.installPlatform));
   });
 </script>
 </body>
