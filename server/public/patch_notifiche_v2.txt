@@ -1,0 +1,72 @@
+FVC APP v2 — notifiche isolate
+
+1) server/public/index.html
+Sostituisci ENTRAMBE le chiamate a /api/subscribe.
+
+Prima:
+fetch('/api/subscribe', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(existing)
+});
+
+Dopo:
+fetch('/api/subscribe', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ ...existing, appVersion: 'v2' })
+});
+
+E la seconda:
+
+Prima:
+body: JSON.stringify(subscription)
+
+Dopo:
+body: JSON.stringify({ ...subscription, appVersion: 'v2' })
+
+
+2) server/index.js
+Le sottoscrizioni v2 devono essere salvate in un hash Redis separato da quello usato dalla v1.
+
+Sostituisci:
+async function getSubscriptions() {
+  const all = await redis.hgetall("subscriptions");
+  if (!all) return [];
+  return Object.values(all).map(v => typeof v === "string" ? JSON.parse(v) : v);
+}
+async function addSubscription(sub) {
+  await redis.hset("subscriptions", { [sub.endpoint]: JSON.stringify(sub) });
+}
+async function removeSubscription(endpoint) {
+  await redis.hdel("subscriptions", endpoint);
+}
+
+con:
+const V2_SUBSCRIPTIONS_KEY = "subscriptions_v2";
+
+async function getSubscriptions() {
+  const all = await redis.hgetall(V2_SUBSCRIPTIONS_KEY);
+  if (!all) return [];
+  return Object.values(all).map(v => typeof v === "string" ? JSON.parse(v) : v);
+}
+async function addSubscription(sub) {
+  await redis.hset(V2_SUBSCRIPTIONS_KEY, { [sub.endpoint]: JSON.stringify(sub) });
+}
+async function removeSubscription(endpoint) {
+  await redis.hdel(V2_SUBSCRIPTIONS_KEY, endpoint);
+}
+
+Inoltre modifica /api/subscribe in modo che accetti SOLO v2:
+const sub = req.body;
+if (!sub || !sub.endpoint || sub.appVersion !== "v2") {
+  return res.status(400).json({error:"Iscrizione v2 non valida"});
+}
+await addSubscription(sub);
+res.status(201).json({ok:true});
+
+Così il backend v2 invia notifiche esclusivamente alle sottoscrizioni registrate dalla v2 e non tocca più l'hash generico della v1.
+
+NOTA:
+Le vecchie sottoscrizioni v2 presenti nell'hash "subscriptions" non verranno migrate automaticamente.
+Dopo il deploy, aprendo la v2 e riattivando "Attiva" oppure ricaricando l'app, la v2 registrerà la sottoscrizione nel nuovo spazio "subscriptions_v2".
