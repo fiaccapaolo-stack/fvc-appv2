@@ -358,6 +358,10 @@
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
           setNotifyState('active');
+          new Notification('Notifiche attivate', {
+            body: 'Riceverai gli aggiornamenti di Fvc Project.',
+            icon: 'icons/icon-192.png'
+          });
           return;
         }
         if (permission === 'denied') {
