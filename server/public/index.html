@@ -330,11 +330,51 @@
   </footer>
 
   <script>
+    const notifyBtn = document.getElementById('notify-btn');
+
+    function setNotifyState(state) {
+      if (!notifyBtn) return;
+      if (state === 'unsupported') { notifyBtn.textContent = 'Non supportato'; notifyBtn.disabled = true; }
+      else if (state === 'active') { notifyBtn.textContent = 'Attive ✓'; notifyBtn.disabled = true; }
+      else if (state === 'blocked') { notifyBtn.textContent = 'Bloccate'; notifyBtn.disabled = true; }
+      else if (state === 'error') { notifyBtn.textContent = 'Riprova'; notifyBtn.disabled = false; }
+      else { notifyBtn.textContent = 'Attiva'; notifyBtn.disabled = false; }
+    }
+
+    async function initNotifyButton() {
+      if (!notifyBtn) return;
+      if (!('Notification' in window)) { setNotifyState('unsupported'); return; }
+      if (Notification.permission === 'denied') { setNotifyState('blocked'); return; }
+      if (Notification.permission === 'granted') { setNotifyState('active'); return; }
+      setNotifyState('idle');
+    }
+
+    if (notifyBtn) {
+      notifyBtn.addEventListener('click', async () => {
+        if (!('Notification' in window)) {
+          setNotifyState('unsupported');
+          return;
+        }
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          setNotifyState('active');
+          return;
+        }
+        if (permission === 'denied') {
+          setNotifyState('blocked');
+          return;
+        }
+        setNotifyState('idle');
+      });
+    }
+
+    initNotifyButton();
+
     document.getElementById('carrier-tabs').addEventListener('click', (e) => {
       const btn = e.target.closest('.tab');
       if (!btn) return;
       const carrier = btn.dataset.carrier || 'tim';
-      const newWindow = window.open(`catalogo.html?cat=telefonia&carrier=${encodeURIComponent(carrier)}&type=mobile`, '_blank', 'noopener,noreferrer');
+      const newWindow = window.open(`catalogo.html?cat=telefonia&carrier=${encodeURIComponent(carrier)}`, '_blank', 'noopener,noreferrer');
       if (newWindow) newWindow.focus();
     });
   </script>
