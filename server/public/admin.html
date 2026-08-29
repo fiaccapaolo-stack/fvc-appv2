@@ -2,409 +2,130 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin FVC Project</title>
-  <style>
-    :root {
-      --bg: #10151C;
-      --surface: #1A222C;
-      --surface-2: #212B37;
-      --border: #2B3644;
-      --text: #EDF1F5;
-      --muted: #8B98A8;
-      --gold: #D4AF37;
-      --gold-soft: #E8CE7A;
-      --cyan: #4FD8E8;
-      --danger: #ff7b7b;
-      --success: #69d49d;
-      --radius: 16px;
-      --font: Inter, system-ui, sans-serif;
-      --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      padding: 24px;
-    }
-    .wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      display: grid;
-      gap: 20px;
-    }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-    }
-    h2, h3, h4 { margin: 0 0 10px; }
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .input, .textarea, select {
-      width: 100%;
-      background: var(--surface-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font: inherit;
-    }
-    .textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-    }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 11px 18px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--gold);
-      color: #141821;
-    }
-    .btn.secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn.danger {
-      background: var(--danger);
-      color: #fff;
-    }
-    .btn.success {
-      background: var(--success);
-      color: #10151C;
-    }
-    .status {
-      min-height: 22px;
-      color: var(--gold-soft);
-      font-size: 14px;
-    }
-    .muted { color: var(--muted); }
-    .small { font-size: 12px; }
-    .inline {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text);
-    }
-    .toggle input { accent-color: var(--gold); }
-    .json-box {
-      background: rgba(0,0,0,0.17);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      font-family: var(--mono);
-      font-size: 12px;
-      white-space: pre-wrap;
-      overflow: auto;
-    }
-  </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h2>Admin FVC Project</h2>
-      <div class="toolbar">
-        <input id="admin-password" class="input" type="password" placeholder="Password admin" />
-        <button id="login-btn" class="btn secondary">Accedi</button>
-      </div>
-      <div id="login-status" class="status"></div>
-    </div>
+  <h2>## Smartphone</h2>
 
-    <div class="card">
-      <h3>## Smartphone</h3>
-      <div class="row">
-        <button class="btn secondary" type="button" id="add-smartphone-btn">+ Nuovo smartphone</button>
-      </div>
-      <div id="smartphone-list" class="grid" style="margin-top:16px;"></div>
-    </div>
+  <button type="button" id="add-smartphone">+ Nuovo smartphone</button>
 
-    <div class="card">
-      <h3>Catalogo</h3>
-      <div class="grid">
-        <div>
-          <label class="muted small">Nome negozio</label>
-          <input id="shop-name" class="input" type="text" />
-        </div>
-        <div>
-          <label class="muted small">Indirizzo</label>
-          <input id="shop-address" class="input" type="text" />
-        </div>
-        <div>
-          <label class="muted small">Telefono</label>
-          <input id="shop-phone" class="input" type="text" />
-        </div>
-        <div>
-          <label class="muted small">WhatsApp</label>
-          <input id="shop-whatsapp" class="input" type="text" />
-        </div>
-      </div>
+  <div id="smartphone-list"></div>
 
-      <div class="row">
-        <button id="save-catalog-btn" class="btn">Salva catalogo definitivamente</button>
-        <button id="save-notify-btn" class="btn success">Salva definitivamente + notifica</button>
-      </div>
-
-      <div class="inline">
-        <label class="toggle"><input id="send-notify-toggle" type="checkbox" checked /> Invia notifica</label>
-      </div>
-
-      <div class="grid" style="margin-top:18px;">
-        <div>
-          <label class="muted small">Titolo notifica</label>
-          <input id="notify-title" class="input" type="text" value="Fvc Project · Novità" />
-        </div>
-        <div>
-          <label class="muted small">Testo notifica</label>
-          <input id="notify-body" class="input" type="text" value="Nuovo articolo disponibile nel catalogo." />
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Preview payload</h3>
-      <div id="payload-preview" class="json-box"></div>
-    </div>
-  </div>
+  <button type="button" id="save-catalog">Salva catalogo definitivamente</button>
+  <button type="button" id="save-and-notify">Salva definitivamente + notifica</button>
 
   <script>
-    const passwordInput = document.getElementById('admin-password');
-    const loginStatus = document.getElementById('login-status');
-    const saveCatalogBtn = document.getElementById('save-catalog-btn');
-    const saveNotifyBtn = document.getElementById('save-notify-btn');
-    const notifyTitleInput = document.getElementById('notify-title');
-    const notifyBodyInput = document.getElementById('notify-body');
-    const sendNotifyToggle = document.getElementById('send-notify-toggle');
-    const payloadPreview = document.getElementById('payload-preview');
+    const ADMIN_PASSWORD = prompt('Password admin');
 
-    let adminPassword = '';
-    let config = {
-      shopName: '',
-      address: '',
-      phone: '',
-      whatsapp: '',
-      products: [],
-      plans: [],
-      news: []
-    };
-
-    function getHeaders(jsonBody = false) {
-      const headers = {};
-      if (adminPassword) headers['x-admin-password'] = adminPassword;
-      if (jsonBody) headers['Content-Type'] = 'application/json';
-      return headers;
-    }
-
-    function setStatus(message, isError = false) {
-      loginStatus.textContent = message;
-      loginStatus.style.color = isError ? '#ff7b7b' : '#E8CE7A';
-    }
-
-    function updatePayloadPreview() {
-      const payload = {
-        shopName: document.getElementById('shop-name').value,
-        address: document.getElementById('shop-address').value,
-        phone: document.getElementById('shop-phone').value,
-        whatsapp: document.getElementById('shop-whatsapp').value,
-        products: config.products,
-        plans: config.plans,
-        news: config.news,
-        notify: sendNotifyToggle.checked ? {
-          title: notifyTitleInput.value || 'Fvc Project · Novità',
-          body: notifyBodyInput.value || 'Nuovo articolo disponibile nel catalogo.'
-        } : undefined
-      };
-      payloadPreview.textContent = JSON.stringify(payload, null, 2);
-    }
-
-    async function apiFetch(url, options = {}) {
-      if (!adminPassword) {
-        setStatus('Inserisci la password admin prima di salvare.', true);
-        throw new Error('Password mancante');
-      }
-
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          ...getHeaders(Boolean(options.body)),
-          ...(options.headers || {})
-        }
-      });
-
-      const text = await response.text();
-      let json;
-      try { json = text ? JSON.parse(text) : {}; } catch { json = { raw: text }; }
-
-      if (!response.ok) {
-        throw new Error(json.error || `Errore ${response.status}`);
-      }
-
-      return json;
-    }
-
-    async function login() {
-      adminPassword = passwordInput.value.trim();
-      try {
-        await apiFetch('/api/admin/check', { method: 'POST' });
-        setStatus('Accesso riuscito.');
-        await loadConfig();
-      } catch (err) {
-        setStatus(err.message || 'Password non corretta', true);
-      }
-    }
-
-    async function loadConfig() {
-      try {
-        const data = await apiFetch('/api/admin/config', { method: 'GET' });
-        config = {
-          shopName: data.shopName || '',
-          address: data.address || '',
-          phone: data.phone || '',
-          whatsapp: data.whatsapp || '',
-          products: Array.isArray(data.products) ? data.products : [],
-          plans: Array.isArray(data.plans) ? data.plans : [],
-          news: Array.isArray(data.news) ? data.news : []
-        };
-        document.getElementById('shop-name').value = config.shopName;
-        document.getElementById('shop-address').value = config.address;
-        document.getElementById('shop-phone').value = config.phone;
-        document.getElementById('shop-whatsapp').value = config.whatsapp;
-        renderSmartphoneList();
-        updatePayloadPreview();
-      } catch (err) {
-        setStatus(err.message || 'Impossibile caricare la configurazione.', true);
-      }
-    }
-
-    function renderSmartphoneList() {
-      const list = document.getElementById('smartphone-list');
-      list.innerHTML = '';
-
-      (config.products || []).forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.style.background = 'var(--surface-2)';
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:8px;">
-            <strong>${item.name || 'Smartphone'}</strong>
-            <button class="btn secondary" type="button" data-remove-index="${index}" style="padding:7px 10px; font-size:12px;">Rimuovi</button>
-          </div>
-          <div class="muted small">${item.spec || ''}</div>
-          <div class="muted small">${item.price || ''}</div>
-        `;
-        list.appendChild(card);
-      });
-
-      list.querySelectorAll('[data-remove-index]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = Number(e.currentTarget.dataset.removeIndex);
-          config.products.splice(idx, 1);
-          renderSmartphoneList();
-          updatePayloadPreview();
-        });
-      });
-    }
-
-    function buildPayload() {
+    function getHeaders() {
       return {
-        shopName: document.getElementById('shop-name').value,
-        address: document.getElementById('shop-address').value,
-        phone: document.getElementById('shop-phone').value,
-        whatsapp: document.getElementById('shop-whatsapp').value,
-        products: config.products,
-        plans: config.plans,
-        news: config.news,
-        ...(sendNotifyToggle.checked ? {
-          notify: {
-            title: notifyTitleInput.value || 'Fvc Project · Novità',
-            body: notifyBodyInput.value || 'Nuovo articolo disponibile nel catalogo.'
-          }
-        } : {})
+        'Content-Type': 'application/json',
+        'x-admin-password': ADMIN_PASSWORD || ''
       };
     }
 
-    async function saveCatalog({ sendNotification = false } = {}) {
-      try {
-        const payload = buildPayload();
-        if (sendNotification) {
-          payload.notify = {
-            title: notifyTitleInput.value || 'Fvc Project · Novità',
-            body: notifyBodyInput.value || 'Nuovo articolo disponibile nel catalogo.'
-          };
-        } else {
-          delete payload.notify;
-        }
+    async function fetchConfig() {
+      const res = await fetch('/api/admin/config', {
+        headers: getHeaders()
+      });
 
-        const result = await apiFetch('/api/admin/config', {
+      const text = await res.text();
+      if (!res.ok) {
+        throw new Error('Password admin non valida');
+      }
+      try {
+        return JSON.parse(text);
+      } catch {
+        return {};
+      }
+    }
+
+    async function saveCatalog(sendNotification) {
+      if (!ADMIN_PASSWORD) {
+        alert('Password admin obbligatoria');
+        return;
+      }
+
+      try {
+        const current = await fetchConfig();
+        const payload = {
+          shopName: current.shopName || 'Fvc Project Srl',
+          address: current.address || '',
+          phone: current.phone || '',
+          whatsapp: current.whatsapp || '',
+          products: Array.isArray(current.products) ? current.products : [],
+          plans: Array.isArray(current.plans) ? current.plans : [],
+          news: Array.isArray(current.news) ? current.news : [],
+          ...(sendNotification ? {
+            notify: {
+              title: 'Fvc Project · Novità',
+              body: 'Nuovo articolo disponibile nel catalogo.'
+            }
+          } : {})
+        };
+
+        const res = await fetch('/api/admin/config', {
           method: 'PUT',
+          headers: getHeaders(),
           body: JSON.stringify(payload)
         });
 
-        setStatus(sendNotification ? 'Catalogo salvato e notifica inviata.' : 'Catalogo salvato.');
-        config = result || config;
-        updatePayloadPreview();
+        const text = await res.text();
+        if (!res.ok) {
+          throw new Error(text || 'Errore salvataggio');
+        }
+
+        alert(sendNotification ? 'Catalogo salvato e notifica inviata' : 'Catalogo salvato');
       } catch (err) {
-        setStatus(err.message || 'Salvataggio non riuscito.', true);
+        console.error(err);
+        alert(err.message || 'Errore durante il salvataggio');
       }
     }
 
-    document.getElementById('login-btn').addEventListener('click', login);
-    document.getElementById('add-smartphone-btn').addEventListener('click', () => {
-      config.products.push({
-        name: 'Nuovo Smartphone',
-        spec: 'Specifica da aggiornare',
-        price: '€ 0',
-        stock: 1,
-        image: ''
-      });
-      renderSmartphoneList();
-      updatePayloadPreview();
+    document.getElementById('save-catalog').addEventListener('click', () => saveCatalog(false));
+    document.getElementById('save-and-notify').addEventListener('click', () => saveCatalog(true));
+
+    document.getElementById('add-smartphone').addEventListener('click', async () => {
+      try {
+        const current = await fetchConfig();
+        const products = Array.isArray(current.products) ? current.products : [];
+        products.push({
+          name: 'Nuovo Smartphone',
+          spec: 'Specifica da aggiornare',
+          price: '€ 0',
+          stock: 1,
+          image: ''
+        });
+
+        const payload = {
+          shopName: current.shopName || 'Fvc Project Srl',
+          address: current.address || '',
+          phone: current.phone || '',
+          whatsapp: current.whatsapp || '',
+          products,
+          plans: Array.isArray(current.plans) ? current.plans : [],
+          news: Array.isArray(current.news) ? current.news : []
+        };
+
+        const res = await fetch('/api/admin/config', {
+          method: 'PUT',
+          headers: getHeaders(),
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          throw new Error('Salvataggio non riuscito');
+        }
+
+        const item = document.createElement('div');
+        item.textContent = 'Nuovo Smartphone aggiunto';
+        document.getElementById('smartphone-list').appendChild(item);
+      } catch (err) {
+        console.error(err);
+        alert('Errore: controlla la password admin');
+      }
     });
-
-    [
-      document.getElementById('shop-name'),
-      document.getElementById('shop-address'),
-      document.getElementById('shop-phone'),
-      document.getElementById('shop-whatsapp'),
-      notifyTitleInput,
-      notifyBodyInput,
-      sendNotifyToggle
-    ].forEach(el => {
-      el.addEventListener('input', updatePayloadPreview);
-      el.addEventListener('change', updatePayloadPreview);
-    });
-
-    saveCatalogBtn.addEventListener('click', () => saveCatalog({ sendNotification: false }));
-    saveNotifyBtn.addEventListener('click', () => saveCatalog({ sendNotification: true }));
-
-    updatePayloadPreview();
   </script>
 </body>
 </html>
