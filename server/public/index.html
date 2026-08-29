@@ -109,6 +109,32 @@
   .info-block strong{display:block; font-size:14px; margin-bottom:4px;}
   .info-block span{font-size:12px; color:var(--text-dim);}
 
+  .info-list{list-style:none; margin:0 0 20px; padding:0; display:flex; flex-direction:column; gap:14px;}
+  .info-list li{display:flex; gap:12px; align-items:flex-start;}
+  .info-list .ic{width:34px; height:34px; border-radius:9px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .info-list .lbl{font-size:11.5px; color:var(--text-dim); margin:0 0 2px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em;}
+  .info-list .val{font-size:14px; margin:0; font-weight:500;}
+  .info-list a.val{text-decoration:none; color:var(--cyan);}
+  .hours{width:100%; border-collapse:collapse; font-size:13px; margin-bottom:24px;}
+  .hours td{padding:7px 0; border-bottom:1px solid var(--border);}
+  .hours td:first-child{color:var(--text-dim);}
+  .hours td:last-child{text-align:right; font-family:var(--font-mono); font-size:12.5px;}
+  .hours tr:last-child td{border-bottom:none;}
+  .map-wrap{border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); margin-bottom:16px; filter:grayscale(0.3) contrast(1.05);}
+  .map-wrap iframe{display:block; width:100%; height:200px; border:0;}
+  .cta-row{display:flex; gap:10px; margin-bottom:8px;}
+  .cta-row .btn{flex:1;}
+  .btn{font-family:var(--font-body); font-weight:600; font-size:13px; padding:10px 16px; border-radius:10px; border:none; background:var(--gold); color:#141821; cursor:pointer; white-space:nowrap;}
+  .btn.ghost{background:transparent; border:1px solid var(--border); color:var(--text);}
+  footer{padding:36px 24px 24px; text-align:center;}
+  footer .bars{display:flex; justify-content:center; align-items:flex-end; gap:3px; height:18px; margin-bottom:12px;}
+  footer .bars span{width:4px; border-radius:2px; background:var(--border);}
+  footer .bars span:nth-child(1){height:35%;}
+  footer .bars span:nth-child(2){height:60%; background:var(--gold); opacity:.6;}
+  footer .bars span:nth-child(3){height:85%; background:var(--gold); opacity:.8;}
+  footer .bars span:nth-child(4){height:100%; background:var(--gold);}
+  footer p{color:var(--text-dim); font-size:12px; margin:0;}
+
   @media (max-width: 520px){
     .quicktiles{grid-template-columns:1fr 1fr;}
     .info-grid{grid-template-columns:1fr;}
@@ -193,7 +219,6 @@
     <div class="tabs" id="tabs">
       <button class="tab active" data-cat="smartphone">Smartphone</button>
       <button class="tab" data-cat="accessori">Accessori</button>
-      <button class="tab" data-cat="ricambi">Ricambi</button>
     </div>
 
     <div class="catalog-search-wrap">
@@ -250,5 +275,62 @@
       </div>
     </div>
   </section>
+
+  <section id="negozio">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Dove siamo</p>
+        <h3>Il negozio</h3>
+      </div>
+    </div>
+
+    <ul class="info-list">
+      <li>
+        <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="#4FD8E8" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.2" stroke="#4FD8E8" stroke-width="1.6"/></svg></span>
+        <div>
+          <p class="lbl">Indirizzo</p>
+          <p class="val" id="shop-address">Viale Indipendenza 57/a, 63100 Ascoli Piceno</p>
+        </div>
+      </li>
+      <li>
+        <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.2 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1v3.7c0 .6-.4 1-1 1C10.5 21.3 2.7 13.5 2.7 3.7c0-.6.4-1 1-1h3.7c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.2 1.1L6.6 10.8Z" stroke="#4FD8E8" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
+        <div>
+          <p class="lbl">Telefono</p>
+          <a class="val" id="shop-phone" href="tel:+39073646354">0736 46354</a>
+        </div>
+      </li>
+      <li>
+        <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13Z" stroke="#4FD8E8" stroke-width="1.5"/><path d="M4 6.5 12 12l8-5.5" stroke="#4FD8E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div>
+          <p class="lbl">WhatsApp / Email</p>
+          <a class="val" id="shop-whatsapp" href="https://wa.me/39333123456" target="_blank" rel="noopener">333 123 456</a>
+        </div>
+      </li>
+    </ul>
+
+    <table class="hours" id="shop-hours">
+      <tr><td>Lunedì</td><td>15:30 – 19:30</td></tr>
+      <tr><td>Martedì – Sabato</td><td>9:00 – 13:00, 15:30 – 19:30</td></tr>
+      <tr><td>Domenica</td><td>Chiuso</td></tr>
+    </table>
+
+    <div class="map-wrap">
+      <iframe
+        id="shop-map"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=13.5800%2C42.8500%2C13.5940%2C42.8580&layer=mapnik&marker=42.8540%2C13.5870"
+        loading="lazy"
+        title="Mappa negozio Fvc Project"></iframe>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn" id="shop-directions" href="https://www.openstreetmap.org/directions?to=42.8540%2C13.5870" target="_blank" rel="noopener">Indicazioni</a>
+      <a class="btn ghost" id="shop-call" href="tel:+39073646354">Chiama</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="bars"><span></span><span></span><span></span><span></span></div>
+    <p id="shop-footer">Fvc Project Srl · Viale Indipendenza 57/a, 63100 Ascoli Piceno<br>Contenuti di esempio — da sostituire con i tuoi</p>
+  </footer>
 </body>
 </html>
