@@ -334,7 +334,7 @@
       const btn = e.target.closest('.tab');
       if (!btn) return;
       const carrier = btn.dataset.carrier || 'tim';
-      const newWindow = window.open(`catalogo.html?cat=telefonia&carrier=${encodeURIComponent(carrier)}`, '_blank', 'noopener,noreferrer');
+      const newWindow = window.open(`catalogo.html?cat=telefonia&carrier=${encodeURIComponent(carrier)}&type=mobile`, '_blank', 'noopener,noreferrer');
       if (newWindow) newWindow.focus();
     });
   </script>

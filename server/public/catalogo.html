@@ -77,6 +77,10 @@
       <button class="tab" data-cat="telefonia">Telefonia</button>
       <button class="tab" data-cat="offerte">Offerte</button>
     </div>
+    <div class="tabs plan-tabs" id="plan-tabs" style="margin-top:8px;">
+      <button class="tab plan-tab active" data-plan-type="mobile">Mobile</button>
+      <button class="tab plan-tab" data-plan-type="fibra">Fissa</button>
+    </div>
     <input id="search" class="search" type="search" placeholder="Cerca marca o modello..." autocomplete="off">
     <div id="grid" class="grid"></div>
   </main>
@@ -85,6 +89,7 @@
     const params = new URLSearchParams(location.search);
     let currentCat = params.get("cat") || "smartphone";
     const selectedCarrier = (params.get("carrier") || "").toLowerCase();
+    let selectedPlanType = (params.get("type") || params.get("kind") || "mobile").toLowerCase();
     let products = [];
     let offers = [];
     let plans = [];
@@ -126,6 +131,9 @@
           const carrierName = String(plan.carrier || plan.operator || "").toLowerCase();
           const matchCarrier = !selectedCarrier || carrierName.includes(selectedCarrier);
           if (!matchCarrier) return false;
+          const planType = String(plan.type || "").toLowerCase();
+          if (selectedPlanType === "fibra" && !(planType === "fibra" || planType === "fissa")) return false;
+          if (selectedPlanType === "mobile" && planType !== "mobile") return false;
           if (!q) return true;
           const haystack = normalize(`${plan.name || ""} ${plan.carrier || ""} ${plan.type || ""} ${plan.details || ""}`);
           return haystack.includes(q);
@@ -169,17 +177,37 @@
         `).join("")
         : '<div class="empty">Nessun prodotto presente in questa categoria al momento.</div>';
     }
-    function bindTabs() {
-      document.querySelectorAll(".tab").forEach((button) => {
+    function syncTabSelection() {
+      document.querySelectorAll(".tab[data-cat]").forEach((button) => {
         button.classList.toggle("active", button.dataset.cat === currentCat);
+      });
+      document.querySelectorAll(".plan-tab").forEach((button) => {
+        button.classList.toggle("active", button.dataset.planType === selectedPlanType);
+      });
+    }
+    function bindTabs() {
+      document.querySelectorAll(".tab[data-cat]").forEach((button) => {
         button.addEventListener("click", () => {
           currentCat = button.dataset.cat;
           const carrierQuery = selectedCarrier ? `&carrier=${encodeURIComponent(selectedCarrier)}` : "";
-          history.replaceState(null, "", `catalogo.html?cat=${currentCat}${carrierQuery}`);
+          const typeQuery = currentCat === "telefonia" ? `&type=${encodeURIComponent(selectedPlanType)}` : "";
+          history.replaceState(null, "", `catalogo.html?cat=${currentCat}${carrierQuery}${typeQuery}`);
           $("search").value = "";
+          syncTabSelection();
           renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
         });
       });
+      document.querySelectorAll(".plan-tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedPlanType = button.dataset.planType || "mobile";
+          const carrierQuery = selectedCarrier ? `&carrier=${encodeURIComponent(selectedCarrier)}` : "";
+          const typeQuery = `&type=${encodeURIComponent(selectedPlanType)}`;
+          history.replaceState(null, "", `catalogo.html?cat=${currentCat}${carrierQuery}${typeQuery}`);
+          syncTabSelection();
+          renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
+        });
+      });
+      syncTabSelection();
     }
     $("search").addEventListener("input", () => {
       renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
