@@ -52,6 +52,12 @@
     .offer-body h3{margin:0 0 4px;font-size:14px;line-height:1.3}
     .offer-body p{margin:0;color:var(--text-dim);font-size:12px;line-height:1.4}
     .offer-arrow{color:var(--gold-soft);font-size:22px}
+    .plan-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);min-height:110px}
+    .plan-badge{padding:6px 8px;border-radius:999px;background:var(--surface-alt);color:var(--cyan);font:10px var(--font-mono);text-transform:uppercase;letter-spacing:.06em}
+    .plan-body{flex:1}
+    .plan-body h3{margin:0 0 4px;font-size:14px;line-height:1.3}
+    .plan-body p{margin:0;color:var(--text-dim);font-size:12px;line-height:1.4}
+    .plan-price{font:600 14px var(--font-mono);color:var(--gold-soft);white-space:nowrap}
     @media(max-width:500px){.grid{grid-template-columns:1fr}.card{min-height:220px}.thumb{height:125px}}
   </style>
 </head>
@@ -68,7 +74,7 @@
     <div class="tabs">
       <button class="tab" data-cat="smartphone">Smartphone</button>
       <button class="tab" data-cat="accessori">Accessori</button>
-      <button class="tab" data-cat="ricambi">Ricambi</button>
+      <button class="tab" data-cat="telefonia">Telefonia</button>
       <button class="tab" data-cat="offerte">Offerte</button>
     </div>
     <input id="search" class="search" type="search" placeholder="Cerca marca o modello..." autocomplete="off">
@@ -85,23 +91,18 @@
     function categoryOf(item) {
       const raw = String(item && (item.category || item.cat || item.type || "")).toLowerCase();
       if (["accessori", "accessory", "accessories"].includes(raw)) return "accessori";
-      if (["ricambi", "repair", "spare"].includes(raw)) return "ricambi";
       return "smartphone";
     }
     function renderProducts(list) {
       const q = normalize($("search").value.trim());
-      const filtered = list.filter((item) => {
-        if (currentCat === "offerte") return true;
-        return categoryOf(item) === currentCat;
-      }).filter((item) => {
-        if (!q) return true;
-        const haystack = normalize(`${item.name || ""} ${item.brand || ""} ${item.spec || ""} ${item.model || ""}`);
-        return haystack.includes(q);
-      });
-      const titleMap = {smartphone:"Smartphone", accessori:"Accessori", ricambi:"Ricambi", offerte:"Offerte"};
-      $("title").textContent = titleMap[currentCat] || "Catalogo";
-      $("subtitle").textContent = filtered.length ? `${filtered.length} elementi disponibili` : "Nessun elemento presente in questa categoria.";
       if (currentCat === "offerte") {
+        const filtered = list.filter((offer) => {
+          if (!q) return true;
+          const haystack = normalize(`${offer.title || ""} ${offer.description || offer.desc || ""}`);
+          return haystack.includes(q);
+        });
+        $("title").textContent = "Offerte";
+        $("subtitle").textContent = filtered.length ? `${filtered.length} offerte disponibili` : "Nessuna offerta disponibile.";
         $("grid").innerHTML = filtered.length
           ? filtered.map((offer) => `
             <a class="offer-card" href="dettaglio.html?kind=offer&id=${encodeURIComponent(offer.id || offer.title || Math.random())}">
@@ -116,6 +117,41 @@
           : '<div class="empty">Nessuna offerta disponibile al momento.</div>';
         return;
       }
+
+      if (currentCat === "telefonia") {
+        const plans = Array.isArray(list) ? list : [];
+        const filtered = plans.filter((plan) => {
+          if (!q) return true;
+          const haystack = normalize(`${plan.name || ""} ${plan.carrier || ""} ${plan.type || ""} ${plan.details || ""}`);
+          return haystack.includes(q);
+        });
+        $("title").textContent = "Telefonia & Fibra";
+        $("subtitle").textContent = filtered.length ? `${filtered.length} offerte disponibili` : "Nessuna offerta di telefonia e fibra.";
+        $("grid").innerHTML = filtered.length
+          ? filtered.map((plan) => `
+            <a class="plan-card" href="dettaglio.html?kind=plan&name=${encodeURIComponent(plan.name || "")}">
+              <span class="plan-badge">${escapeHtml(plan.type || "mobile")}</span>
+              <div class="plan-body">
+                <h3>${escapeHtml(plan.name || "Piano")}</h3>
+                <p>${escapeHtml(plan.carrier || "")}${plan.details ? " · " + escapeHtml(plan.details) : ""}</p>
+              </div>
+              <span class="plan-price">${escapeHtml(plan.price || "")}</span>
+            </a>
+          `).join("")
+          : '<div class="empty">Nessuna offerta di telefonia e fibra disponibile al momento.</div>';
+        return;
+      }
+
+      const filtered = list.filter((item) => {
+        return categoryOf(item) === currentCat;
+      }).filter((item) => {
+        if (!q) return true;
+        const haystack = normalize(`${item.name || ""} ${item.brand || ""} ${item.spec || ""} ${item.model || ""}`);
+        return haystack.includes(q);
+      });
+      const titleMap = {smartphone:"Smartphone", accessori:"Accessori", telefonia:"Telefonia & Fibra"};
+      $("title").textContent = titleMap[currentCat] || "Catalogo";
+      $("subtitle").textContent = filtered.length ? `${filtered.length} elementi disponibili` : "Nessun elemento presente in questa categoria.";
       $("grid").innerHTML = filtered.length
         ? filtered.map((item, index) => `
           <a class="card" href="dettaglio.html?kind=product&cat=${encodeURIComponent(currentCat)}&i=${index}">
@@ -135,20 +171,22 @@
           currentCat = button.dataset.cat;
           history.replaceState(null, "", `catalogo.html?cat=${currentCat}`);
           $("search").value = "";
-          renderProducts(currentCat === "offerte" ? offers : products);
+          renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
         });
       });
     }
+    let plans = [];
     $("search").addEventListener("input", () => {
-      renderProducts(currentCat === "offerte" ? offers : products);
+      renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
     });
     fetch("/api/config")
       .then((res) => res.ok ? res.json() : Promise.reject())
       .then((config) => {
         products = Array.isArray(config.products) ? config.products : [];
         offers = Array.isArray(config.offers) ? config.offers : [];
+        plans = Array.isArray(config.plans) ? config.plans : [];
         bindTabs();
-        renderProducts(currentCat === "offerte" ? offers : products);
+        renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
       })
       .catch(() => {
         $("grid").innerHTML = '<div class="empty">Impossibile caricare il catalogo. Riprova più tardi.</div>';
