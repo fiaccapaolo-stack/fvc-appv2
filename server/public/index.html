@@ -1,172 +1,209 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
-  <title>Fvc Project Srl — Telefonia</title>
-  <meta name="description" content="Catalogo, offerte e contatti del negozio Fvc Project Srl">
-  <meta name="theme-color" content="#10151C">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="/icon-192.png">
-  <link rel="apple-touch-icon" href="/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#10151C;
-      --surface:#1A222C;
-      --surface-alt:#212B37;
-      --border:#2B3644;
-      --text:#EDF1F5;
-      --text-dim:#8B98A8;
-      --gold:#D4AF37;
-      --gold-soft:#E8CE7A;
-      --cyan:#4FD8E8;
-      --radius:16px;
-      --font-display:'Space Grotesk', system-ui, sans-serif;
-      --font-body:'Inter', system-ui, sans-serif;
-      --font-mono:'IBM Plex Mono', 'SFMono-Regular', monospace;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:var(--font-body);
-      -webkit-font-smoothing:antialiased;
-      padding-bottom:88px;
-    }
-    a{color:inherit;text-decoration:none}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+<title>Fvc Project Srl — Telefonia</title>
+<meta name="description" content="Catalogo, offerte e contatti del negozio Fvc Project Srl">
+<meta name="theme-color" content="#10151C">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10151C;
+    --surface:#1A222C;
+    --surface-alt:#212B37;
+    --border:#2B3644;
+    --text:#EDF1F5;
+    --text-dim:#8B98A8;
+    --gold:#D4AF37;
+    --gold-soft:#E8CE7A;
+    --cyan:#4FD8E8;
+    --radius:16px;
+    --font-display:'Space Grotesk', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-mono:'IBM Plex Mono', 'SFMono-Regular', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:88px;
+  }
+  a{color:inherit;}
 
-    .statusbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px 18px 6px;
-      font-family:var(--font-mono);
-      font-size:12px;
-      color:var(--text-dim);
-      letter-spacing:0.02em;
-    }
-    .statusbar .icons{display:flex;align-items:center;gap:8px}
-    .signalbars{display:flex;align-items:flex-end;gap:2px;height:10px}
-    .signalbars span{width:3px;background:var(--text-dim);border-radius:1px}
-    .signalbars span:nth-child(1){height:40%}
-    .signalbars span:nth-child(2){height:60%}
-    .signalbars span:nth-child(3){height:80%}
-    .signalbars span:nth-child(4){height:100%;background:var(--gold)}
-    .battery{
-      width:20px;height:10px;border:1px solid var(--text-dim);border-radius:2px;position:relative;padding:1px;
-    }
-    .battery::after{
-      content:'';position:absolute;right:-3px;top:3px;width:2px;height:4px;background:var(--text-dim);border-radius:0 1px 1px 0;
-    }
-    .battery i{display:block;height:100%;width:78%;background:var(--gold);border-radius:1px}
+  .statusbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 18px 6px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--text-dim);
+    letter-spacing:0.02em;
+  }
+  .statusbar .icons{display:flex; align-items:center; gap:8px;}
+  .signalbars{display:flex; align-items:flex-end; gap:2px; height:10px;}
+  .signalbars span{width:3px; background:var(--text-dim); border-radius:1px;}
+  .signalbars span:nth-child(1){height:40%;}
+  .signalbars span:nth-child(2){height:60%;}
+  .signalbars span:nth-child(3){height:80%;}
+  .signalbars span:nth-child(4){height:100%; background:var(--gold);}
+  .battery{width:20px; height:10px; border:1px solid var(--text-dim); border-radius:2px; position:relative; padding:1px;}
+  .battery::after{content:''; position:absolute; right:-3px; top:3px; width:2px; height:4px; background:var(--text-dim); border-radius:0 1px 1px 0;}
+  .battery i{display:block; height:100%; width:78%; background:var(--gold); border-radius:1px;}
 
-    header.hero{padding:8px 24px 28px}
-    .wordmark{display:flex;align-items:center;gap:10px;margin-bottom:22px}
-    .wordmark .bars{display:flex;align-items:flex-end;gap:3px;height:22px}
-    .wordmark .bars span{width:5px;border-radius:2px;background:var(--gold)}
-    .wordmark .bars span:nth-child(1){height:35%;opacity:.5}
-    .wordmark .bars span:nth-child(2){height:60%;opacity:.75}
-    .wordmark .bars span:nth-child(3){height:85%}
-    .wordmark .bars span:nth-child(4){height:100%}
-    .wordmark h1{font-family:var(--font-display);font-size:22px;font-weight:700;margin:0;letter-spacing:-0.01em}
-    .hero h2{font-family:var(--font-display);font-size:34px;line-height:1.15;font-weight:600;margin:0 0 10px;max-width:20ch}
-    .hero h2 .accent{color:var(--gold)}
-    .hero p.lead{color:var(--text-dim);font-size:15px;max-width:40ch;margin:0 0 26px}
+  header.hero{padding:8px 24px 28px;}
+  .wordmark{display:flex; align-items:center; gap:10px; margin-bottom:22px;}
+  .wordmark .bars{display:flex; align-items:flex-end; gap:3px; height:22px;}
+  .wordmark .bars span{width:5px; border-radius:2px; background:var(--gold);}
+  .wordmark .bars span:nth-child(1){height:35%; opacity:.5;}
+  .wordmark .bars span:nth-child(2){height:60%; opacity:.75;}
+  .wordmark .bars span:nth-child(3){height:85%;}
+  .wordmark .bars span:nth-child(4){height:100%;}
+  .wordmark h1{font-family:var(--font-display); font-size:22px; font-weight:700; margin:0; letter-spacing:-0.01em;}
+  .hero h2{font-family:var(--font-display); font-size:34px; line-height:1.15; font-weight:600; margin:0 0 10px; max-width:20ch;}
+  .hero h2 .accent{color:var(--gold);}
+  .hero p.lead{color:var(--text-dim); font-size:15px; max-width:40ch; margin:0 0 26px;}
 
-    .quicktiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .tile{
-      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 10px 14px;text-align:center;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .15s ease, border-color .15s ease;
-    }
-    .tile:active{transform:scale(0.96)}
-    .tile:hover{border-color:var(--gold)}
-    .tile .glyph{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--surface-alt)}
-    .tile span.label{font-size:12.5px;font-weight:600;letter-spacing:0.01em}
+  .quicktiles{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px;}
+  .tile{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 10px 14px; text-align:center; text-decoration:none; color:var(--text); display:flex; flex-direction:column; align-items:center; gap:10px; transition:transform .15s ease, border-color .15s ease;
+  }
+  .tile:active{transform:scale(0.96);}
+  .tile:hover{border-color:var(--gold);}
+  button.tile{font:inherit; cursor:pointer;}
+  .tile.install-tile{border-color:rgba(79,216,232,.65);}
+  .install-platforms{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  .install-platform-btn{min-height:84px; padding:12px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:14px; cursor:pointer; text-align:left; font-family:var(--font-body);}
+  .install-platform-btn:hover{border-color:var(--cyan);}
+  .install-platform-btn strong{display:block; color:var(--gold-soft); margin-bottom:4px;}
+  .install-platform-btn span{display:block; color:var(--text-dim); font-size:11.5px; line-height:1.25;}
+  .tile .glyph{width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:var(--surface-alt);}
+  .tile span.label{font-size:12.5px; font-weight:600; letter-spacing:0.01em;}
 
-    section{padding:44px 24px 8px;border-top:1px solid var(--border)}
-    .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px}
-    .eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin:0 0 6px}
-    .section-head h3{font-family:var(--font-display);font-size:24px;font-weight:600;margin:0}
+  section{padding:44px 24px 8px; border-top:1px solid var(--border);}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:18px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11px; color:var(--gold); letter-spacing:0.12em; text-transform:uppercase; margin:0 0 6px;}
+  .section-head h3{font-family:var(--font-display); font-size:24px; font-weight:600; margin:0;}
 
-    .notify-card{
-      background:linear-gradient(135deg, var(--surface-alt), var(--surface));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:18px;
-      margin-bottom:18px;
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    .notify-card .txt{flex:1}
-    .notify-card h4{margin:0 0 4px;font-size:14.5px;font-weight:600}
-    .notify-card p{margin:0;color:var(--text-dim);font-size:12px;line-height:1.4}
-    .cta-btn{
-      display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:999px;padding:10px 16px;background:var(--gold);color:#141821;font-weight:700;font-family:var(--font-body);cursor:pointer;
-    }
+  .notify-card{background:linear-gradient(135deg, var(--surface-alt), var(--surface)); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:18px; display:flex; align-items:center; gap:14px;}
+  .notify-card .txt{flex:1;}
+  .notify-card h4{margin:0 0 4px; font-size:14.5px; font-weight:600;}
+  .notify-card p{margin:0; color:var(--text-dim); font-size:12px; line-height:1.4;}
+  .cta-btn{display:inline-flex; align-items:center; justify-content:center; border:none; border-radius:999px; padding:10px 16px; background:var(--gold); color:#141821; font-weight:700; font-family:var(--font-body); cursor:pointer;}
 
-    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .info-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-    .info-block .kicker{font-family:var(--font-mono);font-size:11px;color:var(--gold);margin-bottom:6px}
-    .info-block strong{display:block;font-size:14px;margin-bottom:4px}
-    .info-block span{font-size:12px;color:var(--text-dim)}
+  .info-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .info-block{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px;}
+  .info-block .kicker{font-family:var(--font-mono); font-size:11px; color:var(--gold); margin-bottom:6px;}
+  .info-block strong{display:block; font-size:14px; margin-bottom:4px;}
+  .info-block span{font-size:12px; color:var(--text-dim);}
 
-    @media (max-width: 520px){
-      .quicktiles{grid-template-columns:1fr 1fr}
-      .info-grid{grid-template-columns:1fr}
-    }
-  </style>
+  @media (max-width: 520px){
+    .quicktiles{grid-template-columns:1fr 1fr;}
+    .info-grid{grid-template-columns:1fr;}
+  }
+</style>
 </head>
 <body>
   <div class="statusbar">
-    <span>9:41</span>
-    <div class="icons">
-      <div class="signalbars"><span></span><span></span><span></span><span></span></div>
-      <div class="battery"><i></i></div>
-    </div>
+    <span id="clock">09:41</span>
+    <span class="icons">
+      <span class="signalbars"><span></span><span></span><span></span><span></span></span>
+      <span class="battery"><i></i></span>
+    </span>
   </div>
 
   <header class="hero">
     <div class="wordmark">
-      <div class="bars" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
-      </div>
-      <h1>FVC Project</h1>
+      <span class="bars"><span></span><span></span><span></span><span></span></span>
+      <h1 id="shop-name">Fvc Project Srl</h1>
     </div>
+    <h2>Il tuo negozio di telefonia, <span class="accent">sempre in tasca.</span></h2>
+    <p class="lead">Catalogo aggiornato, offerte in tempo reale e il negozio a un tap di distanza.</p>
 
-    <h2>Telefonia, <span class="accent">offerte</span> e accessori sempre a portata di mano.</h2>
-    <p class="lead">Catalogo, promozioni, piani mobile e fibra, e accessori pronti da vedere anche da smartphone.</p>
-
-    <div class="quicktiles">
+    <nav class="quicktiles">
       <a class="tile" href="catalogo.html?cat=smartphone">
-        <div class="glyph">📱</div>
-        <span class="label">Smartphone</span>
+        <span class="glyph">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="6" y="2" width="12" height="20" rx="2.5" stroke="#D4AF37" stroke-width="1.6"/><line x1="10" y1="18.5" x2="14" y2="18.5" stroke="#D4AF37" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        <span class="label">Catalogo</span>
       </a>
-
-      <a class="tile" href="catalogo.html?cat=accessori">
-        <div class="glyph">🎧</div>
-        <span class="label">Accessori</span>
-      </a>
-
-      <a class="tile" href="catalogo.html?cat=ricambi">
-        <div class="glyph">🔧</div>
-        <span class="label">Ricambi</span>
-      </a>
-
       <a class="tile" href="catalogo.html?cat=offerte">
-        <div class="glyph">🔥</div>
+        <span class="glyph">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 8.5L21 11L14.5 13.5L12 20L9.5 13.5L3 11L9.5 8.5L12 2Z" stroke="#D4AF37" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </span>
         <span class="label">Offerte</span>
       </a>
-    </div>
+      <a class="tile" href="#telefonia">
+        <span class="glyph">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 5c0 8 7 15 15 15l2-4-5-2-1.5 1.5A11 11 0 0 1 9.5 10L11 8.5 9 3.5 5 4Z" stroke="#D4AF37" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="label">Telefonia &amp; Fibra</span>
+      </a>
+      <a class="tile" href="#negozio">
+        <span class="glyph">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z" stroke="#D4AF37" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.2" stroke="#D4AF37" stroke-width="1.6"/></svg>
+        </span>
+        <span class="label">Negozio</span>
+      </a>
+      <button class="tile install-tile" id="install-tile" type="button">
+        <span class="glyph">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" stroke="#4FD8E8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="label">Installa l'app</span>
+      </button>
+    </nav>
   </header>
 
-  <section>
+  <section id="installa">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Sempre a portata di mano</p>
+        <h3>Installa l'app</h3>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:-6px;">Scegli il tuo dispositivo per aggiungere Fvc Project alle tue app.</p>
+    <div class="install-platforms">
+      <button type="button" class="install-platform-btn" data-install-platform="android"><strong>Android</strong><span>Installa direttamente dal browser</span></button>
+      <button type="button" class="install-platform-btn" data-install-platform="ios"><strong>iPhone / iPad</strong><span>Aggiungi l'app alla schermata Home</span></button>
+      <button type="button" class="install-platform-btn" data-install-platform="windows"><strong>Windows</strong><span>Installa con Chrome o Microsoft Edge</span></button>
+      <button type="button" class="install-platform-btn" data-install-platform="mac"><strong>Mac</strong><span>Aggiungi al Dock con Safari o Chrome</span></button>
+    </div>
+  </section>
+
+  <section id="catalogo">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Prezzi aggiornati</p>
+        <h3>Catalogo</h3>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-cat="smartphone">Smartphone</button>
+      <button class="tab" data-cat="accessori">Accessori</button>
+      <button class="tab" data-cat="ricambi">Ricambi</button>
+    </div>
+
+    <div class="catalog-search-wrap">
+      <input id="catalog-search" type="search" placeholder="Cerca marca o modello..." autocomplete="off" aria-label="Cerca marca o modello">
+    </div>
+
+    <div class="products" id="products"></div>
+  </section>
+
+  <section id="offerte">
     <div class="section-head">
       <div>
         <p class="eyebrow">Promozioni</p>
@@ -179,18 +216,19 @@
         <h4>Non perderti le prossime offerte</h4>
         <p>Attiva le notifiche per essere avvisato quando arriva uno sconto.</p>
       </div>
-      <button class="cta-btn" type="button">Attiva</button>
+      <button class="btn" id="notify-btn">Attiva</button>
     </div>
+
+    <div id="offers-list"></div>
   </section>
 
-  <section>
+  <section id="telefonia">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Piani</p>
+        <p class="eyebrow">Piani mobile e fibra</p>
         <h3>Telefonia &amp; Fibra</h3>
       </div>
     </div>
-
     <div class="info-grid">
       <div class="info-block">
         <div class="kicker">Operatori</div>
@@ -199,7 +237,6 @@
         <strong>Tre</strong>
         <strong>Sky</strong>
       </div>
-
       <div class="info-block">
         <div class="kicker">Orari</div>
         <strong>Lunedì</strong>
