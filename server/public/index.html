@@ -109,6 +109,11 @@
   .info-block strong{display:block; font-size:14px; margin-bottom:4px;}
   .info-block span{font-size:12px; color:var(--text-dim);}
 
+  .tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; -ms-overflow-style:none; scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex:0 0 auto; font-family:var(--font-mono); font-size:12.5px; padding:8px 14px; border-radius:999px; border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer;}
+  .tab.active{background:var(--gold); border-color:var(--gold); color:#141821; font-weight:600;}
+
   .info-list{list-style:none; margin:0 0 20px; padding:0; display:flex; flex-direction:column; gap:14px;}
   .info-list li{display:flex; gap:12px; align-items:flex-start;}
   .info-list .ic{width:34px; height:34px; border-radius:9px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
@@ -254,26 +259,17 @@
         <h3>Telefonia &amp; Fibra</h3>
       </div>
     </div>
-    <div class="info-grid">
-      <div class="info-block">
-        <div class="kicker">Operatori</div>
-        <strong>TIM</strong>
-        <strong>Wind</strong>
-        <strong>Tre</strong>
-        <strong>Sky</strong>
-      </div>
-      <div class="info-block">
-        <div class="kicker">Orari</div>
-        <strong>Lunedì</strong>
-        <span>15:30 – 19:30</span>
-        <br>
-        <strong>Martedì – Sabato</strong>
-        <span>9:00 – 13:00, 15:30 – 19:30</span>
-        <br>
-        <strong>Domenica</strong>
-        <span>Chiuso</span>
-      </div>
+
+    <div class="tabs" id="carrier-tabs">
+      <button class="tab active" data-carrier="tim">TIM</button>
+      <button class="tab" data-carrier="wind">WindTre</button>
+      <button class="tab" data-carrier="sky">Sky</button>
+      <button class="tab" data-carrier="lyca">Lycamobile</button>
+      <button class="tab" data-carrier="very">VeryMobile</button>
+      <button class="tab" data-carrier="kena">Kena</button>
     </div>
+
+    <p class="lead" style="margin-top:8px;">Scegli l'operatore per aprire le offerte disponibili.</p>
   </section>
 
   <section id="negozio">
@@ -332,5 +328,15 @@
     <div class="bars"><span></span><span></span><span></span><span></span></div>
     <p id="shop-footer">Fvc Project Srl · Viale Indipendenza 57/a, 63100 Ascoli Piceno<br>Contenuti di esempio — da sostituire con i tuoi</p>
   </footer>
+
+  <script>
+    document.getElementById('carrier-tabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.tab');
+      if (!btn) return;
+      const carrier = btn.dataset.carrier || 'tim';
+      const newWindow = window.open(`catalogo.html?cat=telefonia&carrier=${encodeURIComponent(carrier)}`, '_blank', 'noopener,noreferrer');
+      if (newWindow) newWindow.focus();
+    });
+  </script>
 </body>
 </html>

@@ -84,8 +84,10 @@
     const $ = (id) => document.getElementById(id);
     const params = new URLSearchParams(location.search);
     let currentCat = params.get("cat") || "smartphone";
+    const selectedCarrier = (params.get("carrier") || "").toLowerCase();
     let products = [];
     let offers = [];
+    let plans = [];
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>\"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
     const normalize = (value) => String(value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     function categoryOf(item) {
@@ -119,8 +121,11 @@
       }
 
       if (currentCat === "telefonia") {
-        const plans = Array.isArray(list) ? list : [];
-        const filtered = plans.filter((plan) => {
+        const sourcePlans = Array.isArray(list) ? list : [];
+        const filtered = sourcePlans.filter((plan) => {
+          const carrierName = String(plan.carrier || plan.operator || "").toLowerCase();
+          const matchCarrier = !selectedCarrier || carrierName.includes(selectedCarrier);
+          if (!matchCarrier) return false;
           if (!q) return true;
           const haystack = normalize(`${plan.name || ""} ${plan.carrier || ""} ${plan.type || ""} ${plan.details || ""}`);
           return haystack.includes(q);
@@ -169,13 +174,13 @@
         button.classList.toggle("active", button.dataset.cat === currentCat);
         button.addEventListener("click", () => {
           currentCat = button.dataset.cat;
-          history.replaceState(null, "", `catalogo.html?cat=${currentCat}`);
+          const carrierQuery = selectedCarrier ? `&carrier=${encodeURIComponent(selectedCarrier)}` : "";
+          history.replaceState(null, "", `catalogo.html?cat=${currentCat}${carrierQuery}`);
           $("search").value = "";
           renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
         });
       });
     }
-    let plans = [];
     $("search").addEventListener("input", () => {
       renderProducts(currentCat === "offerte" ? offers : (currentCat === "telefonia" ? plans : products));
     });
